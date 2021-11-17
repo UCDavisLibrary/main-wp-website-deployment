@@ -13,11 +13,17 @@ cd $ROOT_DIR/..
 
 source ./config.sh
 
-if [ -d "./repositories" ]; then
-  rm -rf ./repositories
+if [ -d "./${REPOSITORY_DIR}" ]; then
+  rm -rf ./$REPOSITORY_DIR
 fi
-mkdir ./repositories
+mkdir ./$REPOSITORY_DIR
 
 for repo in "${ALL_GIT_REPOSITORIES[@]}"; do
-  ln -s ../../$repo ./repositories/$repo
+  ln -s ../../$repo ./$REPOSITORY_DIR/$repo
 done
+
+(cd $REPOSITORY_DIR/$WEBSITE_REPO_NAME
+ git submodule update --init --recursive
+)
+
+ls -al $REPOSITORY_DIR

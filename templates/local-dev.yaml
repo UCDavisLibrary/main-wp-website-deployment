@@ -1,0 +1,44 @@
+version: '3'
+services:
+  wordpress:
+    image: {{THEME_IMAGE_NAME}}:{{THEME_IMAGE_NAME_TAG}}
+    env_file:
+      - .env
+    ports:
+      - ${HOST_PORT:-8000}:80
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+    volumes:
+      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}:/var/www/html/wp-content/themes/{{THEME_REPO_NAME}}
+      - uploads-data:/var/www/html/wp-content/uploads
+
+  # init:
+  #   image: init-helper-thing
+  #   env_file:
+  #   - .env
+  #   volumes:
+  #   - uploads-data:/uploads
+
+  db:
+    image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      MYSQL_DATABASE: ${DB_DATABASE:-wordpress}
+      MYSQL_USER: ${DB_USER:-wordpress}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
+    volumes:
+      - db-data:/var/lib/mysql
+
+  adminer:
+    image: {{ADMINER_IMAGE_NAME}}:{{ADMINER_TAG}}
+    ports:
+      - ${ADMINER_HOST_PORT:-8080}:8080
+
+volumes:
+  db-data:
+  uploads-data:
