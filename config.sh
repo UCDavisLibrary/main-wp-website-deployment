@@ -18,7 +18,6 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-# THEME_TAG=main
 WEBSITE_TAG=main
 
 # set local-dev tags used by 
@@ -43,7 +42,7 @@ WEBSITE_IMAGE_NAME=$CONTAINER_REG_ORG/main-wp-website
 MYSQL_IMAGE_NAME=mysql
 ADMINER_IMAGE_NAME=adminer
 
-WEBSITE_IMAGE_NAME_TAG=$THEME_IMAGE_NAME:$THEME_TAG
+WEBSITE_IMAGE_NAME_TAG=$WEBSITE_IMAGE_NAME:$WEBSITE_TAG
 MYSQL_IMAGE_NAME_TAG=$MYSQL_IMAGE_NAME:$MYSQL_TAG
 ADMINER_IMAGE_NAME_TAG=$ADMINER_IMAGE_NAME:$ADMINER_TAG
 
@@ -57,10 +56,14 @@ ALL_DOCKER_BUILD_IMAGE_TAGS=(
 
 GITHUB_ORG_URL=https://github.com/UCDavisLibrary
 
-# Theme
+# Website
 WEBSITE_REPO_NAME=main-wp-website
 WEBSITE_REPO_URL=$GITHUB_ORG_URL/$WEBSITE_REPO_NAME
 
+# Submodules of Website
+# Only listed here to simplify local development
+THEME_REPO_NAME=ucdlib-theme-wp
+THEME_REPO_URL=$GITHUB_ORG_URL/$THEME_REPO_NAME
 
 ##
 # Git
@@ -68,9 +71,12 @@ WEBSITE_REPO_URL=$GITHUB_ORG_URL/$WEBSITE_REPO_NAME
 GIT=git
 GIT_CLONE="$GIT clone"
 
-ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME )
+ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME $THEME_REPO_NAME)
 
 # directory we are going to cache our various git repos at different tags
 # if using pull.sh or the directory we will look for repositories (can by symlinks)
 # if local development
 REPOSITORY_DIR=repositories
+
+# wp directories
+WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME

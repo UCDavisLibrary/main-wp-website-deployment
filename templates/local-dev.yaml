@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: {{THEME_IMAGE_NAME}}:{{THEME_IMAGE_NAME_TAG}}
+    image: {{WEBSITE_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
     ports:
@@ -12,7 +12,9 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
     volumes:
-      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}:/var/www/html/wp-content/themes/{{THEME_REPO_NAME}}
+      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
+      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
+      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
       - uploads-data:/var/www/html/wp-content/uploads
 
   # init:

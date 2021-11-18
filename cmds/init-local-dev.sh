@@ -2,7 +2,7 @@
 
 ###
 # Init the /repositories folder with symbolic links to folders that exist in the same parent
-# directory as this v3-deployment folder.
+# directory as this main-wp-website-deployment folder.
 # Note: This script does not checkout any repository, it simply cleans the /repositories folders
 # and makes the symbolic links
 ###
