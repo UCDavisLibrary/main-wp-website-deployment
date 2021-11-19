@@ -11,18 +11,34 @@ services:
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
     volumes:
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/docker-entrypoint.sh:/docker-entrypoint.sh
       - uploads-data:/var/www/html/wp-content/uploads
 
-  # init:
-  #   image: init-helper-thing
-  #   env_file:
-  #   - .env
-  #   volumes:
-  #   - uploads-data:/uploads
+  init:
+    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    env_file:
+      - .env
+    environment:
+      RUN_INIT: "true"
+      SERVER_ENV: ${SERVER_ENV:-sandbox}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - ../init/run.sh:/run.sh
+      - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
+    command: bash -c "tail -f /dev/null"
 
   db:
     image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}

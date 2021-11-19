@@ -20,9 +20,17 @@ WEBSITE_REPO_HASH=$(git -C $REPOSITORY_DIR/$WEBSITE_REPO_NAME log -1 --pretty=%h
 ##
 # Website
 ##
-
 docker build \
   -t $WEBSITE_IMAGE_NAME_TAG \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --cache-from=$WEBSITE_IMAGE_NAME:$CONTAINER_CACHE_TAG \
   $REPOSITORY_DIR/$WEBSITE_REPO_NAME
+
+##
+# Init/Data hydration helper
+## 
+docker build \
+  -t $INIT_IMAGE_NAME_TAG \
+  --build-arg BUILDKIT_INLINE_CACHE=1 \
+  --cache-from=$INIT_IMAGE_NAME:$CONTAINER_CACHE_TAG \
+  $INIT_DIR

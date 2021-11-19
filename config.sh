@@ -19,11 +19,13 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
 WEBSITE_TAG=main
+INIT_TAG=main
 
 # set local-dev tags used by 
 # local development docker-compose file
 if [[ ! -z $LOCAL_BUILD ]]; then
   WEBSITE_TAG='local-dev'
+  INIT_TAG='local-dev'
 fi
 
 MYSQL_TAG=5.7
@@ -39,15 +41,18 @@ CONTAINER_CACHE_TAG="latest"
 
 # Container Images
 WEBSITE_IMAGE_NAME=$CONTAINER_REG_ORG/main-wp-website
+INIT_IMAGE_NAME=$CONTAINER_REG_ORG/main-wp-website-init
 MYSQL_IMAGE_NAME=mysql
 ADMINER_IMAGE_NAME=adminer
 
 WEBSITE_IMAGE_NAME_TAG=$WEBSITE_IMAGE_NAME:$WEBSITE_TAG
 MYSQL_IMAGE_NAME_TAG=$MYSQL_IMAGE_NAME:$MYSQL_TAG
 ADMINER_IMAGE_NAME_TAG=$ADMINER_IMAGE_NAME:$ADMINER_TAG
+INIT_IMAGE_NAME_TAG=$INIT_IMAGE_NAME:$INIT_TAG
 
 ALL_DOCKER_BUILD_IMAGE_TAGS=(
   $WEBSITE_IMAGE_NAME_TAG
+  $INIT_IMAGE_NAME_TAG
 )
 
 ##
@@ -77,6 +82,9 @@ ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME $THEME_REPO_NAME)
 # if using pull.sh or the directory we will look for repositories (can by symlinks)
 # if local development
 REPOSITORY_DIR=repositories
+
+# init container image directory
+INIT_DIR=init
 
 # wp directories
 WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME

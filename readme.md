@@ -25,6 +25,15 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
    1. `git checkout dev`
 3. In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh in the Repositories section. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
 4. Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`. 
+5. Grab service account so the `init` container can access website snapshot bucket
+   1. Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
+   2. Login and set project id
+     1. `gcloud auth login`
+     2. `gcloud config set project digital-ucdavis-edu`
+   3. Copy service account to root folder: `gsutil cp gs://website-v3-content/main-website-content-reader-key.json main-website-content-reader-key.json`
+6. Create a `.env` file in `local-dev` and set the following contig
+  1. `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc.  Will controll things like where to fetch snapshot from
+  2. TODO: steve
 
 ## Usage
 
