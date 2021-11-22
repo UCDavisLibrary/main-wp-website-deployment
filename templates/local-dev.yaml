@@ -7,11 +7,12 @@ services:
     ports:
       - ${HOST_PORT:-8000}:80
     environment:
-      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
     volumes:
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
@@ -26,7 +27,8 @@ services:
     environment:
       RUN_INIT: "true"
       SERVER_ENV: ${SERVER_ENV:-sandbox}
-      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
@@ -38,7 +40,7 @@ services:
       - uploads-data:/uploads
       - ../init/run.sh:/run.sh
       - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
-    command: bash -c "tail -f /dev/null"
+    # command: bash -c "tail -f /dev/null"
 
   db:
     image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}

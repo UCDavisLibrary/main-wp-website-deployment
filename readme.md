@@ -4,17 +4,14 @@ This repository contains files for deploying the main UC Davis Library website (
 ## Site Architecture
 library.ucdavis.edu is a custom Wordpress installation composed of several services and git repositories:
 - Third-party Services
-  - Wordpress
-  - Wordpress CLI
-  - Mysql
-  - Elasticsearch
-  - Adminer (local development)
+  - [Wordpress](https://developer.wordpress.org/)
+  - [Wordpress CLI](https://wp-cli.org/)
+  - [Mysql](https://www.mysql.com/)
+  - [Elasticsearch](https://www.elastic.co/elasticsearch/)
+  - [Adminer (local development only)](https://www.adminer.org/)
 - Custom Git Repositories
   - [Primary Theme](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
-  - Plugins
-    - Hours and Locations
-    - Directory+
-    - Special Collections
+  - [Additional Plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
 
 ## Local Development
 
@@ -31,9 +28,23 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
      1. `gcloud auth login`
      2. `gcloud config set project digital-ucdavis-edu`
    3. Copy service account to root folder: `gsutil cp gs://website-v3-content/main-website-content-reader-key.json main-website-content-reader-key.json`
-6. Create a `.env` file in `local-dev` and set the following contig
-  1. `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc.  Will controll things like where to fetch snapshot from
-  2. TODO: steve
+6. Create your local docker-compose file by running:
+   1. `./cmds/generate-deployment-files.sh`
+7. Start an `.env` file in the `local-dev` directory (created in the previous step) and set the following config
+  1. `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies what data to pull. Defaults to `sandbox`
+  2. `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
+  3. `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on React debugging set this to: `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);`
+8. Build the `local-dev` tagged images:
+   1. `./cmds/build-local-dev.sh`
+
+### Making Changes in Local Development
+- Make sure you followed all the steps in the local-dev inital setup section above.
+- By default, the site loads the dev public and editor theme bundles, which are created by watch processes. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `repositories/ucdlib-theme-wp` and run:
+  - `cd src/public; npm run watch`
+  - `cd src/editor; npm run watch`
+- By default, plugins run off their dist JS code. To use the watch process for a plugin, enable it in your `local-dev` env file by adding `UCD_PLUGIN_<PLUGIN_NAME>_ENV` and then start its watch process.
+- Bring the site up by starting our docker containers:
+  - `cd website-local-dev; docker compose up`
 
 ## Usage
 
@@ -48,5 +59,6 @@ Here are some common parameters:
 | WORDPRESS_DB_PASSWORD | Password of mysql database used by site. defaults to `wordpress` |
 | WORDPRESS_DB_USER | User of mysql database used by site. defaults to `wordpress` |
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
+| SERVER_ENV | Directory with snapshot data in Google bucket |
 
 
