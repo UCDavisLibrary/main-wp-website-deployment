@@ -21,3 +21,7 @@ $GIT_CLONE $WEBSITE_REPO_URL.git \
   --branch $WEBSITE_TAG \
   --depth 1 \
   $REPOSITORY_DIR/$WEBSITE_REPO_NAME
+
+cd $REPOSITORY_DIR/$WEBSITE_REPO_NAME
+git submodule update --init --recursive
+cd $ROOT_DIR/..
