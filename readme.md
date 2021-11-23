@@ -20,7 +20,7 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
    1. `git clone`
 2. Checkout the branch you want to work on, e.g.:
    1. `git checkout dev`
-3. In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh in the Repositories section. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
+3. In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
 4. Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`. 
 5. Grab service account so the `init` container can access website snapshot bucket
    1. Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
@@ -42,9 +42,17 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 - By default, the site loads the dev public and editor theme bundles, which are created by watch processes. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `repositories/ucdlib-theme-wp` and run:
   - `cd src/public; npm run watch`
   - `cd src/editor; npm run watch`
-- By default, plugins run off their dist JS code. To use the watch process for a plugin, enable it in your `local-dev` env file by adding `UCD_PLUGIN_<PLUGIN_NAME>_ENV` and then start its watch process.
-- Bring the site up by starting our docker containers:
+- By default, plugins run off their dist JS code. To use the watch process for a plugin, enable it in your `local-dev` env file by adding `UCD_PLUGIN_<PLUGIN_NAME>_ENV=dev` and then start its watch process.
+- Bring the site up by starting the docker compose stack:
   - `cd website-local-dev; docker compose up`
+- Code directories are mounted as volumes so changes to your host filesystem are reflected in container. However, changes to application packages (ex: package.json) will require rebuild of images (`./cmds/build-local-dev.sh`)
+
+#### Loading a new snapshot
+If you need to update your snapshot or use a different one entirely:
+1. Drop the existing docker volumes: `docker compose down -v`
+2. Make sure your `SERVER_ENV` config is pointing to the bucket you want to use
+3. Restart the stack: `docker compose up`
+  
 
 ## Usage
 

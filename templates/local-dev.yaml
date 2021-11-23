@@ -18,6 +18,7 @@ services:
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ../{{REPOSITORY_DIR}}/{{PLUGIN_REPO_NAME}}/ucd-cas:{{WP_PLUGIN_DIR}}/ucd-cas
       - uploads-data:/var/www/html/wp-content/uploads
 
   init:

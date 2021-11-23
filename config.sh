@@ -66,9 +66,13 @@ WEBSITE_REPO_NAME=main-wp-website
 WEBSITE_REPO_URL=$GITHUB_ORG_URL/$WEBSITE_REPO_NAME
 
 # Submodules of Website
-# Only listed here to simplify local development
+# They all already exist in 'main-wp-website'
+# Only listed here to simplify committing changes during local development
 THEME_REPO_NAME=ucdlib-theme-wp
+PLUGIN_REPO_NAME=ucdlib-wp-plugins
 THEME_REPO_URL=$GITHUB_ORG_URL/$THEME_REPO_NAME
+PLUGIN_REPO_URL=$GITHUB_ORG_URL/$PLUGIN_REPO_NAME
+
 
 ##
 # Git
@@ -76,7 +80,7 @@ THEME_REPO_URL=$GITHUB_ORG_URL/$THEME_REPO_NAME
 GIT=git
 GIT_CLONE="$GIT clone"
 
-ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME $THEME_REPO_NAME)
+ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME $THEME_REPO_NAME $PLUGIN_REPO_NAME)
 
 # directory we are going to cache our various git repos at different tags
 # if using pull.sh or the directory we will look for repositories (can by symlinks)
@@ -88,3 +92,4 @@ INIT_DIR=init
 
 # wp directories
 WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME
+WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
