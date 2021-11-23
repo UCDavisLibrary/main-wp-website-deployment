@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:main
+    image: {{WEBSITE_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
     ports:
@@ -15,7 +15,7 @@ services:
       - uploads-data:/var/www/html/wp-content/uploads
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:main
+    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
     env_file:
       - .env
     environment:
@@ -35,7 +35,7 @@ services:
     # command: bash -c "tail -f /dev/null"
 
   db:
-    image: mysql:5.7
+    image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
     env_file:
       - .env
     environment:

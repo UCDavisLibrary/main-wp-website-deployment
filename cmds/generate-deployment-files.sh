@@ -11,6 +11,17 @@ cd $ROOT_DIR/../templates
 
 source ../config.sh
 
+# generate main dc file
+content=$(cat deployment.yaml)
+for key in $(compgen -v); do
+  if [[ $key == "COMP_WORDBREAKS" || $key == "content" ]]; then
+    continue;
+  fi
+  escaped=$(printf '%s\n' "${!key}" | sed -e 's/[\/&]/\\&/g')
+  content=$(echo "$content" | sed "s/{{$key}}/${escaped}/g") 
+done
+echo "$content" > ../docker-compose.yaml
+
 WEBSITE_IMAGE_NAME_ESCAPED=$(echo $WEBSITE_IMAGE_NAME | sed 's/\//\\\//g')
 INIT_IMAGE_NAME_ESCAPED=$(echo $INIT_IMAGE_NAME | sed 's/\//\\\//g')
 

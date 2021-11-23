@@ -1,0 +1,114 @@
+steps:
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['rsync', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}', '/config']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/$PROJECT_ID/ci-buildnum'
+    args: ['/config/buildnum', '/config/.buildenv', '/config/$BUILD_ID.json']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
+    args: ['/config']
+    env: 
+    - 'REPO_NAME=$REPO_NAME'
+    - 'BRANCH_NAME=$BRANCH_NAME'
+    - '_UCD_LIB_INITIATOR=$_UCD_LIB_INITIATOR'
+    - '_GITHUB_EVENT=$_GITHUB_EVENT'
+    - '_GITHUB_ISSUE_NUMBER=$_GITHUB_ISSUE_NUMBER'
+    - '_GITHUB_REPOSITORY=$_GITHUB_REPOSITORY'
+    - '_GITHUB_PR_USER=$_GITHUB_PR_USER'
+    - '_GITHUB_PR_MERGED_BY=$_GITHUB_PR_MERGED_BY'
+    - 'BUILD_ID=$BUILD_ID'
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '/config/buildnum', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}/buildnum']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '-r', '/config/${BUILD_ID}', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}/${BUILD_ID}']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: gcr.io/cloud-builders/git
+    entrypoint: "bash"
+    args: ["-c", "./cmds/clone.sh"]
+    env: 
+      - 'REPO_NAME=$REPO_NAME'
+      - 'BRANCH_NAME=$BRANCH_NAME'
+      - 'SHORT_SHA=$SHORT_SHA'
+      - 'TAG_NAME=$TAG_NAME'
+
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/pull.sh"]
+
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/build.sh;"]
+    env: 
+      - 'CLOUD_BUILD=true'
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/push.sh"]
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: gcr.io/cloud-builders/gcloud
+    secretEnv: ['SSH_KEY']
+    entrypoint: 'bash'
+    args: [ '-c', 'echo "$$SSH_KEY" >> /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa' ]
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: 'bash'
+    args: [ '-c', 'ssh-keyscan -t rsa rp-gc-ci.library.ucdavis.edu > /root/.ssh/known_hosts' ]
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+
+  - name: gcr.io/cloud-builders/git
+    secretEnv: ['SSH_USERNAME']
+    entrypoint: 'bash'
+    args: [ '-c', 'ssh $$SSH_USERNAME@rp-gc-ci.library.ucdavis.edu "BRANCH_NAME=$BRANCH_NAME /opt/wp-$$BRANCH_NAME/gcloud/dc-deploy.sh || true"']
+    env: 
+      - 'BRANCH_NAME=$BRANCH_NAME'
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/digital-ucdavis-edu/secrets/rp-gc-ci-key/versions/latest
+    env: 'SSH_KEY'
+  - versionName: projects/digital-ucdavis-edu/secrets/rp-gc-ci-username/versions/latest
+    env: 'SSH_USERNAME'
+
+substitutions:
+  _CONFIG_BUCKET: ci-build-config
+  _CONFIG_PROJECT: main-website
+  _UCD_LIB_INITIATOR: unknown
+  _GITHUB_EVENT: ''
+  _GITHUB_ISSUE_NUMBER: ''
+  _GITHUB_REPOSITORY: ''
+  _GITHUB_PR_USER: ''
+  _GITHUB_PR_MERGED_BY: ''
+
+timeout: 1800s
