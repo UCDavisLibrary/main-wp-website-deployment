@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:main
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:sandbox
     env_file:
       - .env
     ports:
@@ -15,7 +15,7 @@ services:
       - uploads-data:/var/www/html/wp-content/uploads
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:main
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:sandbox
     env_file:
       - .env
     environment:

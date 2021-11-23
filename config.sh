@@ -18,8 +18,8 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=main
-INIT_TAG=main
+WEBSITE_TAG=sandbox
+INIT_TAG=sandbox
 
 # set local-dev tags used by 
 # local development docker-compose file
