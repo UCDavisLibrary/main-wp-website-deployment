@@ -5,7 +5,7 @@ GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
 UPLOADS_TAR_FILE=uploads.tar.gz
 UPLOADS_DIR=/uploads
 MYSQL_DUMP_FILE=main-wp-website.sql.gz
-WP_SERVER_URL=${SERVER_URL:-http://localhost}
+WP_SERVER_URL=${SERVER_URL:-http://localhost:3000}
 
 shopt -s expand_aliases
 
@@ -20,7 +20,7 @@ fi
 alias mysql="mysql --user=$WORDPRESS_DB_USER --host=$WORDPRESS_DB_JUST_HOST --port=$WORDPRESS_DB_JUST_PORT --password=$WORDPRESS_DB_PASSWORD $WORDPRESS_DB_DATABASE"
 
 # wait for db to start up
-wait-for-it $WORDPRESS_DB_JUST_HOST:$WORDPRESS_DB_JUST_PORT
+wait-for-it $WORDPRESS_DB_JUST_HOST:$WORDPRESS_DB_JUST_PORT -t 0
 
 if [[ -z RUN_INIT || -z SERVER_ENV ]]; then
   echo "Skipping db and media uploads hydration.";
@@ -47,13 +47,13 @@ else
     rm /$MYSQL_DUMP_FILE
 
     BACKUP_SERVER_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
-    echo "Updating links from ${BACKUP_SERVER_URL} to ${WP_SERVER_URL}:${HOST_PORT}"
+    echo "Updating links from ${BACKUP_SERVER_URL} to ${WP_SERVER_URL}"
     
-    mysql -e "update wp_options set option_value='${WP_SERVER_URL}:${HOST_PORT}' where option_name='siteurl';"
-    mysql -e "update wp_options set option_value='${WP_SERVER_URL}:${HOST_PORT}' where option_name='home';"
-    mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
-    mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
-    mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
+    mysql -e "update wp_options set option_value='${WP_SERVER_URL}' where option_name='siteurl';"
+    mysql -e "update wp_options set option_value='${WP_SERVER_URL}' where option_name='home';"
+    mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
+    mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
+    mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
 
   else
     echo "WP data found in ${WORDPRESS_DB_JUST_HOST}:${WORDPRESS_DB_JUST_PORT}. Skipping hydration."
