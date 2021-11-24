@@ -69,4 +69,3 @@ Here are some common parameters:
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
 | SERVER_ENV | Directory with snapshot data in Google bucket |
 
-
