@@ -5,7 +5,7 @@ GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
 UPLOADS_TAR_FILE=uploads.tar.gz
 UPLOADS_DIR=/uploads
 MYSQL_DUMP_FILE=main-wp-website.sql.gz
-THIS_WP_SERVER=http://localhost
+WP_SERVER_URL=${SERVER_URL:-http://localhost}
 
 shopt -s expand_aliases
 
@@ -46,13 +46,14 @@ else
     zcat /$MYSQL_DUMP_FILE | mysql
     rm /$MYSQL_DUMP_FILE
 
-    echo "Updating links from ${SERVER_ENV_URL} to ${THIS_WP_SERVER}:${HOST_PORT}"
-    SERVER_ENV_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
-    mysql -e "update wp_options set option_value='${THIS_WP_SERVER}:${HOST_PORT}' where option_name='siteurl';"
-    mysql -e "update wp_options set option_value='${THIS_WP_SERVER}:${HOST_PORT}' where option_name='home';"
-    mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${SERVER_ENV_URL}', '${THIS_WP_SERVER}:${HOST_PORT}');"
-    mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${SERVER_ENV_URL}', '${THIS_WP_SERVER}:${HOST_PORT}');"
-    mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${SERVER_ENV_URL}', '${THIS_WP_SERVER}:${HOST_PORT}');"
+    BACKUP_SERVER_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
+    echo "Updating links from ${BACKUP_SERVER_URL} to ${WP_SERVER_URL}:${HOST_PORT}"
+    
+    mysql -e "update wp_options set option_value='${WP_SERVER_URL}:${HOST_PORT}' where option_name='siteurl';"
+    mysql -e "update wp_options set option_value='${WP_SERVER_URL}:${HOST_PORT}' where option_name='home';"
+    mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
+    mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
+    mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}:${HOST_PORT}');"
 
   else
     echo "WP data found in ${WORDPRESS_DB_JUST_HOST}:${WORDPRESS_DB_JUST_PORT}. Skipping hydration."
