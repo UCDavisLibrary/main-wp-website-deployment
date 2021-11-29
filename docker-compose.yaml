@@ -11,6 +11,9 @@ services:
       WORDPRESS_DB_DATABASE: ${DB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_SITEURL', '${SERVER_URL}' );
+        define('WP_HOME', '${SERVER_URL}' );
     volumes:
       - uploads-data:/var/www/html/wp-content/uploads
 
@@ -19,6 +22,7 @@ services:
     env_file:
       - .env
     environment:
+      SERVER_ENV: ${SERVER_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}

@@ -60,6 +60,7 @@ If you need to update your snapshot or use a different one entirely:
 Here are some common parameters:
 | Param | Description |
 | ----- | ----------- |
+| SERVER_URL | Your wordpress site url/blog address i.e. `https://rebrand.library.ucdavis.edu` or `http://localhost:3000`| 
 | WORDPRESS_DEBUG | Set to `1` to turn wp's php debug mode. Nice for local development. |
 | WORDPRESS_CONFIG_EXTRA | Set arbitrary `wp-config` values. `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);` will turn on the React debug tool. |
 | HOST_PORT | Port where site is hosted. Defaults to `8000` |
@@ -68,4 +69,5 @@ Here are some common parameters:
 | WORDPRESS_DB_USER | User of mysql database used by site. defaults to `wordpress` |
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
 | SERVER_ENV | Directory with snapshot data in Google bucket |
+
 
