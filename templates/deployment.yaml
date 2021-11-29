@@ -14,6 +14,7 @@ services:
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_SITEURL', '${SERVER_URL}' );
         define('WP_HOME', '${SERVER_URL}' );
+        define('FORCE_SSL_ADMIN', true);
     volumes:
       - uploads-data:/var/www/html/wp-content/uploads
 
