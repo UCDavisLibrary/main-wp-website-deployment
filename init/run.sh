@@ -22,9 +22,9 @@ alias mysql="mysql --user=$WORDPRESS_DB_USER --host=$WORDPRESS_DB_JUST_HOST --po
 # wait for db to start up
 wait-for-it $WORDPRESS_DB_JUST_HOST:$WORDPRESS_DB_JUST_PORT -t 0
 
-if [[ -z RUN_INIT || -z SERVER_ENV ]]; then
+if [[ -z "$RUN_INIT" || -z "$SERVER_ENV" ]]; then
   echo "Skipping db and media uploads hydration.";
-  if [[ -z RUN_INIT ]]; then
+  if [[ -z "$RUN_INIT" ]]; then
     echo "No RUN_INIT flag found."
   else 
     echo "SERVER_ENV environmental variable is not set."
