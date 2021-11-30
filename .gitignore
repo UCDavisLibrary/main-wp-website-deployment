@@ -1,6 +1,8 @@
 node_modules
 .env
 repositories
+snapshots
 .DS_Store
 website-local-dev
 main-website-content-reader-key.json
+main-website-content-writer-key.json
