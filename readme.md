@@ -16,26 +16,30 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 ## Local Development
 
 ### Initial Setup
-1. Clone this repository
-   1. `git clone`
-2. Checkout the branch you want to work on, e.g.:
-   1. `git checkout dev`
-3. In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
-4. Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`. 
-5. Grab service account so the `init` container can access website snapshot bucket
-   1. Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
-   2. Login and set project id
-     1. `gcloud auth login`
-     2. `gcloud config set project digital-ucdavis-edu`
-   3. Copy service account to root folder: `gsutil cp gs://website-v3-content/main-website-content-reader-key.json main-website-content-reader-key.json`
-6. Create your local docker-compose file by running:
-   1. `./cmds/generate-deployment-files.sh`
-7. Start an `.env` file in the `local-dev` directory (created in the previous step) and set the following config
-  1. `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies what data to pull. Defaults to `sandbox`
-  2. `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
-  3. `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on React debugging set this to: `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);`
-8. Build the `local-dev` tagged images:
-   1. `./cmds/build-local-dev.sh`
+- Clone this repository
+  - `git clone`
+- Checkout the branch you want to work on, e.g.:
+  - `git checkout dev`
+- In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
+- Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`. 
+- Grab service account so the `init` container can access website snapshot bucket
+  - Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
+  - Login and set project id
+    - `gcloud auth login`
+    - `gcloud config set project digital-ucdavis-edu`
+  - Copy service account to root folder: `gsutil cp gs://website-v3-content/main-website-content-reader-key.json main-website-content-reader-key.json`
+- Create your local docker-compose file by running:
+  - `./cmds/generate-deployment-files.sh`
+- Start an `.env` file in the `local-dev` directory (created in the previous step). The most relevant parameters are:
+  - `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies what data to pull. Defaults to `sandbox`
+  - `SERVER_URL`: where your local wp instance will live. defaults to `http://localhost:3000`
+  - `HOST_PORT`: host port for the wp instance. defaults to `3000`
+  - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
+  - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on React debugging set this to: `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);`
+- Build the `local-dev` tagged images:
+  - `./cmds/build-local-dev.sh`
+
+Your development environment should now have all the necessary pieces in place. The next section goes over how to start everything up.
 
 ### Making Changes in Local Development
 - Make sure you followed all the steps in the local-dev inital setup section above.
@@ -45,7 +49,9 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 - By default, plugins run off their dist JS code. To use the watch process for a plugin, enable it in your `local-dev` env file by adding `UCD_PLUGIN_<PLUGIN_NAME>_ENV=dev` and then start its watch process.
 - Bring the site up by starting the docker compose stack:
   - `cd website-local-dev; docker compose up`
-- Code directories are mounted as volumes so changes to your host filesystem are reflected in container. However, changes to application packages (ex: package.json) will require rebuild of images (`./cmds/build-local-dev.sh`)
+- Code directories are mounted as volumes so changes to your host filesystem are reflected in container.
+
+### Checking in your code
 
 #### Loading a new snapshot
 If you need to update your snapshot or use a different one entirely:

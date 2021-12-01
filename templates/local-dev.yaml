@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     ports:
-      - ${HOST_PORT:-8000}:80
+      - ${HOST_PORT:-3000}:80
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}

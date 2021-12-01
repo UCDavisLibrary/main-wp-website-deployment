@@ -36,7 +36,7 @@ docker-compose exec -T db bash -c 'rm /main-wp-website.sql.gz'
 echo "sqldump file copied to 'snapshots' directory on host"
 
 echo "Compressing wp media uploads directory"
-docker-compose exec -T wordpress bash -c 'tar -czvf uploads.tar.gz wp-content/uploads'
+docker-compose exec -T wordpress bash -c 'tar -C wp-content -czvf uploads.tar.gz uploads'
 docker cp "$(docker-compose ps -q wordpress)":/var/www/html/uploads.tar.gz ./snapshots/uploads.tar.gz
 docker-compose exec -T wordpress bash -c 'rm uploads.tar.gz'
 echo "uploads file copied to 'snapshots' directory on host"
