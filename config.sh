@@ -26,6 +26,8 @@ INIT_TAG=sandbox
 if [[ ! -z $LOCAL_BUILD ]]; then
   WEBSITE_TAG='local-dev'
   INIT_TAG='local-dev'
+  
+  WP_ACF_KEY=$(<acf-key.txt)
 fi
 
 MYSQL_TAG=5.7

@@ -100,6 +100,8 @@ availableSecrets:
     env: 'SSH_KEY'
   - versionName: projects/digital-ucdavis-edu/secrets/rp-gc-ci-username/versions/latest
     env: 'SSH_USERNAME'
+  - versionName: projects/digital-ucdavis-edu/secrets/wp-acf-key/versions/latest
+    env: 'WP_ACF_KEY'
 
 substitutions:
   _CONFIG_BUCKET: ci-build-config

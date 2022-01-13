@@ -24,6 +24,7 @@ docker build \
   -t $WEBSITE_IMAGE_NAME_TAG \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --cache-from=$WEBSITE_IMAGE_NAME:$CONTAINER_CACHE_TAG \
+  --build-arg WP_ACF_KEY=${WP_ACF_KEY} \
   --build-arg WEBSITE_TAG=${WEBSITE_TAG} \
   --build-arg BUILD_NUM=${BUILD_NUM} \
   --build-arg BUILD_TIME=${BUILD_TIME} \

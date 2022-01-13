@@ -13,6 +13,7 @@ services:
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
+      UCD_CAS_HOST: ${UCD_CAS_HOST:-ssodev.ucdavis.edu}
     volumes:
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
       - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
