@@ -56,6 +56,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
     args: ["-c", "./cmds/build.sh;"]
+    secretEnv: ['WP_ACF_KEY']
     env: 
       - 'CLOUD_BUILD=true'
     volumes:
