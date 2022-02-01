@@ -21,13 +21,16 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 WEBSITE_TAG=sandbox
 INIT_TAG=sandbox
 
-# set local-dev tags used by 
-# local development docker-compose file
-if [[ ! -z $LOCAL_BUILD ]]; then
-  WEBSITE_TAG='local-dev'
-  INIT_TAG='local-dev'
-  
-  WP_ACF_KEY=$(<acf-key.txt)
+# Submodules
+# only used for init-local-dev checkout
+WP_PLUGINS_SUB_TAG=sandbox
+WP_THEME_SUB_TAG=sandbox
+
+CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+if [[ -f "$CONFIG_DIR/main-website-content-reader-key.json" ]]; then
+  GOOGLE_KEY_FILE_CONTENT="$(cat $CONFIG_DIR/main-website-content-reader-key.json)"
+else
+  echo "Warning: no developer key found"
 fi
 
 MYSQL_TAG=5.7
@@ -40,6 +43,13 @@ ADMINER_TAG=4
 # Container Registery
 CONTAINER_REG_ORG=gcr.io/digital-ucdavis-edu
 CONTAINER_CACHE_TAG="latest"
+
+# set localhost/local-dev used by 
+# local development docker-compose file
+if [[ ! -z $LOCAL_BUILD ]]; then
+  CONTAINER_REG_ORG='localhost/local-dev'
+fi
+
 
 # Container Images
 WEBSITE_IMAGE_NAME=$CONTAINER_REG_ORG/main-wp-website
@@ -74,8 +84,8 @@ WEBSITE_REPO_URL=$GITHUB_ORG_URL/$WEBSITE_REPO_NAME
 # Only listed here to simplify committing changes during local development
 THEME_REPO_NAME=ucdlib-theme-wp
 PLUGIN_REPO_NAME=ucdlib-wp-plugins
-THEME_REPO_URL=$GITHUB_ORG_URL/$THEME_REPO_NAME
-PLUGIN_REPO_URL=$GITHUB_ORG_URL/$PLUGIN_REPO_NAME
+# THEME_REPO_URL=$GITHUB_ORG_URL/$THEME_REPO_NAME
+# PLUGIN_REPO_URL=$GITHUB_ORG_URL/$PLUGIN_REPO_NAME
 
 
 ##
@@ -84,7 +94,7 @@ PLUGIN_REPO_URL=$GITHUB_ORG_URL/$PLUGIN_REPO_NAME
 GIT=git
 GIT_CLONE="$GIT clone"
 
-ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME $THEME_REPO_NAME $PLUGIN_REPO_NAME)
+ALL_GIT_REPOSITORIES=( $WEBSITE_REPO_NAME )
 
 # directory we are going to cache our various git repos at different tags
 # if using pull.sh or the directory we will look for repositories (can by symlinks)

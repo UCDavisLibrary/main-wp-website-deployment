@@ -15,12 +15,39 @@ services:
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
       UCD_CAS_HOST: ${UCD_CAS_HOST:-ssodev.ucdavis.edu}
     volumes:
-      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
-      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
-      - ../{{REPOSITORY_DIR}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
-      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/docker-entrypoint.sh:/docker-entrypoint.sh
-      - ../{{REPOSITORY_DIR}}/{{PLUGIN_REPO_NAME}}/ucd-cas:{{WP_PLUGIN_DIR}}/ucd-cas
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
+      # - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucd-cas:{{WP_PLUGIN_DIR}}/ucd-cas
       - uploads-data:/var/www/html/wp-content/uploads
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - cluster.routing.allocation.disk.watermark.flood_stage=98%
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL:http://elasticsearch:9200
+      - xpack.security.enabled=false
+      - telemetry.enabled=false
+    depends_on:
+      - elasticsearch
 
   init:
     image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
@@ -64,3 +91,4 @@ services:
 volumes:
   db-data:
   uploads-data:
+  es-data:

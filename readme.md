@@ -27,7 +27,8 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - Login and set project id
     - `gcloud auth login`
     - `gcloud config set project digital-ucdavis-edu`
-  - Copy service account to root folder: `gsutil cp gs://website-v3-content/main-website-content-reader-key.json main-website-content-reader-key.json`
+  - Copy service account keys: 
+    - `./cmds/init-keys.sh`
 - Create your local docker-compose file by running:
   - `./cmds/generate-deployment-files.sh`
 - Start an `.env` file in the `local-dev` directory (created in the previous step). The most relevant parameters are:
@@ -36,6 +37,7 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - `HOST_PORT`: host port for the wp instance. defaults to `3000`
   - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
   - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on React debugging set this to: `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);`
+  - `RUN_INIT`: Run data hydration on cold start
 - Build the `local-dev` tagged images:
   - `./cmds/build-local-dev.sh`
 

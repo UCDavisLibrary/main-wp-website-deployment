@@ -14,7 +14,7 @@ source ../config.sh
 # generate main dc file
 content=$(cat deployment.yaml)
 for key in $(compgen -v); do
-  if [[ $key == "COMP_WORDBREAKS" || $key == "content" ]]; then
+  if [[ $key == "COMP_WORDBREAKS" || $key == "content" || $key == "GOOGLE_KEY_FILE_CONTENT" ]]; then
     continue;
   fi
   escaped=$(printf '%s\n' "${!key}" | sed -e 's/[\/&]/\\&/g')
@@ -27,10 +27,9 @@ INIT_IMAGE_NAME_ESCAPED=$(echo $INIT_IMAGE_NAME | sed 's/\//\\\//g')
 
 # generate local development dc file
 content=$(cat local-dev.yaml)
-WEBSITE_TAG='local-dev'
-INIT_TAG='local-dev'
+LOCAL_BUILD=true source ../config.sh
 for key in $(compgen -v); do
-  if [[ $key == "COMP_WORDBREAKS" || $key == "content" ]]; then
+  if [[ $key == "COMP_WORDBREAKS" || $key == "content" || $key == "GOOGLE_KEY_FILE_CONTENT" ]]; then
     continue;
   fi
   escaped=$(printf '%s\n' "${!key}" | sed -e 's/[\/&]/\\&/g')

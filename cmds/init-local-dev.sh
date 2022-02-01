@@ -22,8 +22,11 @@ for repo in "${ALL_GIT_REPOSITORIES[@]}"; do
   ln -s ../../$repo ./$REPOSITORY_DIR/$repo
 done
 
-(cd $REPOSITORY_DIR/$WEBSITE_REPO_NAME
- git submodule update --init --recursive
+(
+  cd $REPOSITORY_DIR/$WEBSITE_REPO_NAME
+  git submodule update --init --recursive
+  cd ucdlib-theme-wp && git checkout $WP_THEME_SUB_TAG
+  cd ../ucdlib-wp-plugins && git checkout $WP_PLUGINS_SUB_TAG
 )
 
 ls -al $REPOSITORY_DIR
