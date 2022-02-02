@@ -39,3 +39,12 @@ docker build \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --cache-from=$INIT_IMAGE_NAME:$CONTAINER_CACHE_TAG \
   $INIT_DIR
+
+##
+# Elastic Search Indexer
+## 
+docker build \
+  -t $INDEXER_IMAGE_NAME_TAG \
+  --build-arg BUILDKIT_INLINE_CACHE=1 \
+  --cache-from=$INDEXER_IMAGE_NAME:$CONTAINER_CACHE_TAG \
+  $INDEXER_DIR
