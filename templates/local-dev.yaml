@@ -75,6 +75,8 @@ services:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
+    ports:
+      - 3001:3000
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-writer-key.json
     depends_on:

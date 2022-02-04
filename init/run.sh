@@ -55,6 +55,9 @@ else
     mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
     mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
 
+    echo "Starting full elastic search reindex"
+    curl http://indexer:3000/reindex
+
   else
     echo "WP data found in ${WORDPRESS_DB_JUST_HOST}:${WORDPRESS_DB_JUST_PORT}. Skipping hydration."
 
