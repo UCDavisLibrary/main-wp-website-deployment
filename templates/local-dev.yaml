@@ -71,6 +71,22 @@ services:
       - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
     # command: bash -c "tail -f /dev/null"
 
+  indexer:
+    image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    env_file:
+      - .env
+    ports:
+      - 3001:3000
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-writer-key.json
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/lib:/service/lib
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/index.js:/service/index.js
+      - ../main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
+    # command: bash -c "tail -f /dev/null"
+
   db:
     image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
     env_file:
