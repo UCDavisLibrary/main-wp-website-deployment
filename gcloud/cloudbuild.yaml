@@ -12,9 +12,10 @@ steps:
     - name: 'config'
       path: '/config'
 
-  - name: gcr.io/cloud-builders/docker
-    entrypoint: "bash"
-    args: ["-c", "./cmds/init-keys.sh"]
+  - name: gcr.io/cloud-builders/gcloud
+    secretEnv: ['MAIN_WEBSITE_READER_KEY']
+    entrypoint: 'bash'
+    args: [ '-c', 'echo "$$MAIN_WEBSITE_READER_KEY" >> ./main-website-content-reader-key.json' ]
 
   - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
     args: ['/config']
@@ -60,7 +61,6 @@ steps:
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
     args: ["-c", "./cmds/build.sh;"]
-    secretEnv: ['WP_ACF_KEY']
     env: 
       - 'CLOUD_BUILD=true'
     volumes:
@@ -105,8 +105,8 @@ availableSecrets:
     env: 'SSH_KEY'
   - versionName: projects/digital-ucdavis-edu/secrets/rp-gc-ci-username/versions/latest
     env: 'SSH_USERNAME'
-  - versionName: projects/digital-ucdavis-edu/secrets/wp-acf-key/versions/latest
-    env: 'WP_ACF_KEY'
+  - versionName: projects/digital-ucdavis-edu/secrets/main-website-content-reader-key/versions/latest
+    env: 'MAIN_WEBSITE_READER_KEY'
 
 substitutions:
   _CONFIG_BUCKET: ci-build-config
