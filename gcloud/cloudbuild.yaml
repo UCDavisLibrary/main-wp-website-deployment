@@ -12,6 +12,10 @@ steps:
     - name: 'config'
       path: '/config'
 
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/init-keys.sh"]
+
   - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
     args: ['/config']
     env: 
@@ -48,10 +52,6 @@ steps:
       - 'BRANCH_NAME=$BRANCH_NAME'
       - 'SHORT_SHA=$SHORT_SHA'
       - 'TAG_NAME=$TAG_NAME'
-
-  - name: gcr.io/cloud-builders/docker
-    entrypoint: "bash"
-    args: ["-c", "./cmds/init-keys.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"

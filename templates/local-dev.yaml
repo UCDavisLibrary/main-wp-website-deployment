@@ -15,12 +15,13 @@ services:
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
       UCD_CAS_HOST: ${UCD_CAS_HOST:-ssodev.ucdavis.edu}
     volumes:
-      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/assets:{{WP_UCD_THEME_DIR}}/assets
-      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/theme:{{WP_UCD_THEME_DIR}}/theme
-      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/views:{{WP_UCD_THEME_DIR}}/views
-      # - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}/docker-entrypoint.sh:/docker-entrypoint.sh
-      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucd-cas:{{WP_PLUGIN_DIR}}/ucd-cas
       - uploads-data:/var/www/html/wp-content/uploads
+      # theme
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}:{{WP_UCD_THEME_DIR}}
+      # plugins
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucd-cas:{{WP_PLUGIN_DIR}}/ucd-cas
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-locations:{{WP_PLUGIN_DIR}}/ucdlib-locations
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-assets:{{WP_PLUGIN_DIR}}/ucdlib-assets
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
