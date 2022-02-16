@@ -93,3 +93,4 @@ services:
 volumes:
   db-data:
   uploads-data:
+  es-data:
