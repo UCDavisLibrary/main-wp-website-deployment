@@ -18,6 +18,33 @@ services:
     volumes:
       - uploads-data:/var/www/html/wp-content/uploads
 
+  elasticsearch:
+    image: {{ELASTIC_SEARCH_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - cluster.routing.allocation.disk.watermark.flood_stage=98%
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: {{KIBANA_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL:http://elasticsearch:9200
+      - xpack.security.enabled=false
+      - telemetry.enabled=false
+    depends_on:
+      - elasticsearch
+
   init:
     image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
     env_file:
@@ -37,6 +64,19 @@ services:
       - uploads-data:/uploads
       - ./main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
     # command: bash -c "tail -f /dev/null"
+
+  indexer:
+    image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    env_file:
+      - .env
+    ports:
+      - 3001:3000
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-writer-key.json
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
 
   db:
     image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
