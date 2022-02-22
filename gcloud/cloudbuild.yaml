@@ -84,7 +84,7 @@ steps:
 
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: 'bash'
-    args: [ '-c', 'ssh-keyscan -t rsa rp-gc-ci.library.ucdavis.edu > /root/.ssh/known_hosts' ]
+    args: [ '-c', 'ssh-keyscan -t rsa wp-gc-ci.library.ucdavis.edu > /root/.ssh/known_hosts' ]
     volumes:
     - name: 'ssh'
       path: /root/.ssh
@@ -92,7 +92,7 @@ steps:
   - name: gcr.io/cloud-builders/git
     secretEnv: ['SSH_USERNAME']
     entrypoint: 'bash'
-    args: [ '-c', 'ssh $$SSH_USERNAME@rp-gc-ci.library.ucdavis.edu "BRANCH_NAME=$BRANCH_NAME /opt/wp-$$BRANCH_NAME/gcloud/dc-deploy.sh || true"']
+    args: [ '-c', 'ssh $$SSH_USERNAME@wp-gc-ci.library.ucdavis.edu "BRANCH_NAME=$BRANCH_NAME /opt/wp-$$BRANCH_NAME/gcloud/dc-deploy.sh || true"']
     env: 
       - 'BRANCH_NAME=$BRANCH_NAME'
     volumes:
