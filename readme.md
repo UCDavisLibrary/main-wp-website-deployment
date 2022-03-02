@@ -1,5 +1,5 @@
 # Website Deployment
-This repository contains files for deploying the main UC Davis Library website (library.ucdavis.edu) to a server or locally.
+This repository contains files for deploying the main UC Davis Library website (library.ucdavis.edu) to a server or locally. 
 
 ## Site Architecture
 library.ucdavis.edu is a custom Wordpress installation composed of several services and git repositories:
