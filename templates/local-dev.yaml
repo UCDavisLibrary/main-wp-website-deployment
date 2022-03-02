@@ -56,7 +56,7 @@ services:
       - .env
     environment:
       RUN_INIT: "true"
-      SERVER_ENV: ${SERVER_ENV:-sandbox}
+      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}

@@ -32,7 +32,7 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 - Create your local docker-compose file by running:
   - `./cmds/generate-deployment-files.sh`
 - Start an `.env` file in the `local-dev` directory (created in the previous step). The most relevant parameters are:
-  - `SERVER_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies what data to pull. Defaults to `sandbox`
+  - `BACKUP_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies which Google Cloud bucket to pull data from. Defaults to `sandbox`
   - `SERVER_URL`: where your local wp instance will live. defaults to `http://localhost:3000`
   - `HOST_PORT`: host port for the wp instance. defaults to `3000`
   - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
@@ -58,7 +58,7 @@ Your development environment should now have all the necessary pieces in place. 
 #### Loading a new snapshot
 If you need to update your snapshot or use a different one entirely:
 1. Drop the existing docker volumes: `docker compose down -v`
-2. Make sure your `SERVER_ENV` config is pointing to the bucket you want to use
+2. Make sure your `BACKUP_ENV` config is pointing to the bucket you want to use
 3. Restart the stack: `docker compose up`
   
 
@@ -76,6 +76,6 @@ Here are some common parameters:
 | WORDPRESS_DB_PASSWORD | Password of mysql database used by site. defaults to `wordpress` |
 | WORDPRESS_DB_USER | User of mysql database used by site. defaults to `wordpress` |
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
-| SERVER_ENV | Directory with snapshot data in Google bucket |
+| BACKUP_ENV | Directory with snapshot data in Google bucket |
 
 

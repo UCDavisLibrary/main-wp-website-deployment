@@ -22,12 +22,12 @@ alias mysql="mysql --user=$WORDPRESS_DB_USER --host=$WORDPRESS_DB_JUST_HOST --po
 # wait for db to start up
 wait-for-it $WORDPRESS_DB_JUST_HOST:$WORDPRESS_DB_JUST_PORT -t 0
 
-if [[ -z "$RUN_INIT" || -z "$SERVER_ENV" ]]; then
+if [[ -z "$RUN_INIT" || -z "$BACKUP_ENV" ]]; then
   echo "Skipping db and media uploads hydration.";
   if [[ -z "$RUN_INIT" ]]; then
     echo "No RUN_INIT flag found."
   else 
-    echo "SERVER_ENV environmental variable is not set."
+    echo "BACKUP_ENV environmental variable is not set."
   fi
 else
 
@@ -39,8 +39,8 @@ else
     gcloud auth login --quiet --cred-file=${GOOGLE_APPLICATION_CREDENTIALS}
     gcloud config set project $GOOGLE_CLOUD_PROJECT
 
-    echo "Downloading: gs://${GOOGLE_CLOUD_BUCKET}/${SERVER_ENV}/${MYSQL_DUMP_FILE}"
-    gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${SERVER_ENV}/${MYSQL_DUMP_FILE}" /$MYSQL_DUMP_FILE
+    echo "Downloading: gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/${MYSQL_DUMP_FILE}"
+    gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/${MYSQL_DUMP_FILE}" /$MYSQL_DUMP_FILE
 
     echo "Loading sql dump file"
     zcat /$MYSQL_DUMP_FILE | mysql
@@ -74,8 +74,8 @@ else
     gcloud auth login --quiet --cred-file=${GOOGLE_APPLICATION_CREDENTIALS}
     gcloud config set project $GOOGLE_CLOUD_PROJECT
 
-    echo "Downloading: gs://${GOOGLE_CLOUD_BUCKET}/${SERVER_ENV}/${UPLOADS_TAR_FILE}"
-    gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${SERVER_ENV}/${UPLOADS_TAR_FILE}" $UPLOADS_DIR/$UPLOADS_TAR_FILE
+    echo "Downloading: gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/${UPLOADS_TAR_FILE}"
+    gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/${UPLOADS_TAR_FILE}" $UPLOADS_DIR/$UPLOADS_TAR_FILE
     echo "Extracting: tar -zxvf $UPLOADS_DIR/$UPLOADS_TAR_FILE -C $UPLOADS_DIR"
     cd $UPLOADS_DIR
     tar -zxvf $UPLOADS_DIR/$UPLOADS_TAR_FILE -C .
