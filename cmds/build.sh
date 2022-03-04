@@ -32,7 +32,7 @@ docker build \
   $REPOSITORY_DIR/$WEBSITE_REPO_NAME
 
 ##
-# Init/Data hydration helper
+# Init/Data back and hydration helper
 ## 
 docker build \
   -t $INIT_IMAGE_NAME_TAG \

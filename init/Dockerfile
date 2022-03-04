@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y mariadb-client \
 COPY run.sh /run.sh
 COPY backup.sh /backup.sh
 
-COPY run_backup.sh /etc/cron.d/backup
+COPY backup-cron /etc/cron.d/backup
+COPY backup_entrypoint.sh /backup_entrypoint.sh
 RUN chmod 0644 /etc/cron.d/backup
 
 CMD [ "/run.sh" ]

@@ -83,7 +83,7 @@ services:
     volumes:
       - backup-data:/snapshots
       - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
-    command: "/backup.sh"
+    command: "/backup_entrypoint.sh"
 
   indexer:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
