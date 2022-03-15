@@ -81,6 +81,7 @@ services:
       - db
       - wordpress
     volumes:
+      - uploads-data:/uploads
       - backup-data:/snapshots
       - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
     command: "/backup_entrypoint.sh"

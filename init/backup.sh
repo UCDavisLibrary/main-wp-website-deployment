@@ -5,8 +5,9 @@ GOOGLE_CLOUD_BUCKET=website-v3-content
 GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
 GOOGLE_APPLICATION_CREDENTIALS=/etc/main-website-content-writer-key.json
 SNAPSHOTS_DIR=/snapshots
+UPLOAD_DIR=/uploads
 
-if [[ -z "$BACKUP_ENV" ]]; then
+if [[ -z $BACKUP_ENV ]]; then
   echo "BACKUP_ENV variable is required."
   exit 1
 fi
@@ -35,7 +36,7 @@ echo "Generating sqldump file"
 mysqldump --password="$MYSQL_ROOT_PASSWORD" --host=$WORDPRESS_DB_JUST_HOST --port=$WORDPRESS_DB_JUST_PORT "$WORDPRESS_DB_DATABASE" | gzip > $SNAPSHOT_DIR/main-wp-website.sql.gz
 
 echo "Compressing wp media uploads directory"
-tar -czvf $SNAPSHOT_DIR/uploads.tar.gz ./uploads
+tar -czvf $SNAPSHOT_DIR/uploads.tar.gz $UPLOAD_DIR
 
 echo "uploading files to cloud bucket ${BACKUP_ENV}"
 gcloud auth login --quiet --cred-file=${GOOGLE_APPLICATION_CREDENTIALS}
