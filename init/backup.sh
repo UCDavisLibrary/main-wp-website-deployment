@@ -1,5 +1,7 @@
 #! /bin/bash
 
+source /etc/profile
+
 # TODO: move to .env ?
 GOOGLE_CLOUD_BUCKET=website-v3-content
 GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
@@ -43,3 +45,4 @@ gcloud auth login --quiet --cred-file=${GOOGLE_APPLICATION_CREDENTIALS}
 gcloud config set project $GOOGLE_CLOUD_PROJECT
 gsutil cp $SNAPSHOT_DIR/main-wp-website.sql.gz "gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/main-wp-website.sql.gz"
 gsutil cp $SNAPSHOT_DIR/uploads.tar.gz "gs://${GOOGLE_CLOUD_BUCKET}/${BACKUP_ENV}/uploads.tar.gz" 
+echo "backup complete"
