@@ -72,6 +72,32 @@ services:
       - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
     # command: bash -c "tail -f /dev/null"
 
+  backup:
+    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    env_file:
+      - .env
+    environment:
+      BACKUP_ENV: ${BACKUP_ENV:-localhost}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-8000}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - backup-data:/snapshots
+      - ../init/backup_entrypoint.sh:/backup_entrypoint.sh
+      - ../init/backup.sh:/backup.sh
+      - ../init/backup-cron:/etc/cron.d/backup 
+      - ../main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
+    command: bash -c "tail -f /dev/null"
+    # command: "/backup_entrypoint.sh"
+
   indexer:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
@@ -109,3 +135,4 @@ volumes:
   db-data:
   uploads-data:
   es-data:
+  backup-data:
