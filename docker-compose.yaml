@@ -63,7 +63,29 @@ services:
     volumes:
       - uploads-data:/uploads
       - ./main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
-    # command: bash -c "tail -f /dev/null"
+
+
+  backup:
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:sandbox
+    env_file:
+      - .env
+    environment:
+      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-8000}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - backup-data:/snapshots
+      - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
+    command: "/backup_entrypoint.sh"
 
   indexer:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:sandbox
@@ -93,4 +115,5 @@ services:
 volumes:
   db-data:
   uploads-data:
+  backup-data:
   es-data:
