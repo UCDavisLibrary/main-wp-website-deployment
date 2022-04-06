@@ -114,3 +114,14 @@ INDEXER_DIR=$REPOSITORY_DIR/$WEBSITE_REPO_NAME/elastic-search
 # wp directories
 WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME
 WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+
+# NPM
+NPM=npm
+NPM_PRIVATE_PACKAGES=(
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$THEME_REPO_NAME/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$THEME_REPO_NAME/src/editor
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-assets/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-assets/src/editor
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-locations/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-migration/src/editor
+)
