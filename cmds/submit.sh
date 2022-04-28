@@ -11,7 +11,7 @@ ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $ROOT_DIR/..
 
 gcloud config set project digital-ucdavis-edu
-USER=$(gcloud auth list --filter="-status:ACTIVE"  --format="value(account)")
+USER=$(gcloud auth list --filter="status:ACTIVE"  --format="value(account)")
 
 echo "Submitting build to Google Cloud..."
 gcloud builds submit \
