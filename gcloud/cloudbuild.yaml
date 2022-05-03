@@ -118,4 +118,4 @@ substitutions:
   _GITHUB_PR_USER: ''
   _GITHUB_PR_MERGED_BY: ''
 
-timeout: 1800s
+timeout: 3200s
