@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ###
-# Push docker image and $CONTAINER_CACHE_TAG (currently :latest) tag to docker hub
+# Push docker image and $CONTAINER_CACHE_TAG (currently $CONTAINER_CACHE_TAG) tag to docker hub
 ###
 
 set -e
