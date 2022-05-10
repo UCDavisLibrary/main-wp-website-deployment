@@ -43,7 +43,12 @@ ELASTIC_SEARCH_TAG=7.16.3
 
 # Container Registery
 CONTAINER_REG_ORG=gcr.io/digital-ucdavis-edu
-CONTAINER_CACHE_TAG=$(git rev-parse --abbrev-ref HEAD)
+
+if [[ -z $BRANCH_NAME ]]; then
+  CONTAINER_CACHE_TAG=$(git rev-parse --abbrev-ref HEAD)
+else
+  CONTAINER_CACHE_TAG=$BRANCH_NAME
+fi
 
 # set localhost/local-dev used by 
 # local development docker-compose file
