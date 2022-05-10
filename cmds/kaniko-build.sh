@@ -30,21 +30,21 @@ CACHE_TIME=720h
 ##
 # Website
 ##
-# docker run --rm -v $(pwd):/workspace \
-#   -v $(pwd)/main-website-content-writer-key.json:/kaniko/config.json:ro \
-#   -e GOOGLE_APPLICATION_CREDENTIALS=/kaniko/config.json \
-#   gcr.io/kaniko-project/executor:latest \
-#   --cache=true \
-#   --cache-ttl=720h \
-#   --destination=$WEBSITE_IMAGE_NAME_TAG \
-#   --build-arg=BUILDKIT_INLINE_CACHE=1 \
-#   --build-arg=GOOGLE_KEY_FILE_CONTENT="${GOOGLE_KEY_FILE_CONTENT}" \
-#   --build-arg=WEBSITE_TAG=${WEBSITE_TAG} \
-#   --build-arg=BUILD_NUM=${BUILD_NUM} \
-#   --build-arg=BUILD_TIME=${BUILD_TIME} \
-#   --build-arg=APP_VERSION=${APP_VERSION} \
-#   --context=/workspace/$REPOSITORY_DIR/$WEBSITE_REPO_NAME \
-#   --dockerfile=/workspace/$REPOSITORY_DIR/$WEBSITE_REPO_NAME/Dockerfile
+docker run --rm -v $(pwd):/workspace \
+  -v $(pwd)/main-website-content-writer-key.json:/kaniko/config.json:ro \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/kaniko/config.json \
+  gcr.io/kaniko-project/executor:latest \
+  --cache=true \
+  --cache-ttl=720h \
+  --destination=$WEBSITE_IMAGE_NAME_TAG \
+  --build-arg=BUILDKIT_INLINE_CACHE=1 \
+  --build-arg=GOOGLE_KEY_FILE_CONTENT="${GOOGLE_KEY_FILE_CONTENT}" \
+  --build-arg=WEBSITE_TAG=${WEBSITE_TAG} \
+  --build-arg=BUILD_NUM=${BUILD_NUM} \
+  --build-arg=BUILD_TIME=${BUILD_TIME} \
+  --build-arg=APP_VERSION=${APP_VERSION} \
+  --context=/workspace/$REPOSITORY_DIR/$WEBSITE_REPO_NAME \
+  --dockerfile=/workspace/$REPOSITORY_DIR/$WEBSITE_REPO_NAME/Dockerfile
 
 ##
 # Init/Data back and hydration helper
