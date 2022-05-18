@@ -17,6 +17,11 @@ steps:
     entrypoint: 'bash'
     args: [ '-c', 'echo "$$MAIN_WEBSITE_READER_KEY" >> ./main-website-content-reader-key.json' ]
 
+  - name: gcr.io/cloud-builders/gcloud
+    secretEnv: ['MAIN_WEBSITE_WRITER_KEY']
+    entrypoint: 'bash'
+    args: [ '-c', 'echo "$$MAIN_WEBSITE_WRITER_KEY" >> ./main-website-content-writer-key.json' ]
+
   - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
     args: ['/config']
     env: 
@@ -48,28 +53,27 @@ steps:
   - name: gcr.io/cloud-builders/git
     entrypoint: "bash"
     args: ["-c", "./cmds/clone.sh"]
-    env: 
+    env:
+      - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1' 
       - 'REPO_NAME=$REPO_NAME'
       - 'BRANCH_NAME=$BRANCH_NAME'
       - 'SHORT_SHA=$SHORT_SHA'
       - 'TAG_NAME=$TAG_NAME'
 
-  - name: gcr.io/cloud-builders/docker
-    entrypoint: "bash"
-    args: ["-c", "./cmds/pull.sh"]
+  # - name: gcr.io/cloud-builders/docker
+  #   env:
+  #     - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1' 
+  #     - 'BRANCH_NAME=$BRANCH_NAME'
+  #   entrypoint: "bash"
+  #   args: ["-c", "./cmds/pull.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
-    args: ["-c", "./cmds/build.sh;"]
+    args: ["-c", "./cmds/kaniko-build.sh;"]
     env: 
       - 'CLOUD_BUILD=true'
-    volumes:
-    - name: 'config'
-      path: '/config'
-
-  - name: gcr.io/cloud-builders/docker
-    entrypoint: "bash"
-    args: ["-c", "./cmds/push.sh"]
+      - 'BRANCH_NAME=$BRANCH_NAME'
+      - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1'
     volumes:
     - name: 'config'
       path: '/config'
@@ -107,6 +111,8 @@ availableSecrets:
     env: 'SSH_USERNAME'
   - versionName: projects/digital-ucdavis-edu/secrets/main-website-content-reader-key/versions/latest
     env: 'MAIN_WEBSITE_READER_KEY'
+  - versionName: projects/digital-ucdavis-edu/secrets/main-website-content-writer-key/versions/latest
+    env: 'MAIN_WEBSITE_WRITER_KEY'
 
 substitutions:
   _CONFIG_BUCKET: ci-build-config
@@ -118,4 +124,4 @@ substitutions:
   _GITHUB_PR_USER: ''
   _GITHUB_PR_MERGED_BY: ''
 
-timeout: 1800s
+timeout: 3200s

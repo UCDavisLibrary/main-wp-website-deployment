@@ -43,7 +43,12 @@ ELASTIC_SEARCH_TAG=7.16.3
 
 # Container Registery
 CONTAINER_REG_ORG=gcr.io/digital-ucdavis-edu
-CONTAINER_CACHE_TAG="latest"
+
+if [[ -z $BRANCH_NAME ]]; then
+  CONTAINER_CACHE_TAG=$(git rev-parse --abbrev-ref HEAD)
+else
+  CONTAINER_CACHE_TAG=$BRANCH_NAME
+fi
 
 # set localhost/local-dev used by 
 # local development docker-compose file
@@ -114,3 +119,15 @@ INDEXER_DIR=$REPOSITORY_DIR/$WEBSITE_REPO_NAME/elastic-search
 # wp directories
 WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME
 WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+
+# NPM
+NPM=npm
+NPM_PRIVATE_PACKAGES=(
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$THEME_REPO_NAME/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$THEME_REPO_NAME/src/editor
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-assets/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-assets/src/editor
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-locations/src/public
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-migration/src/editor
+  $REPOSITORY_DIR/$WEBSITE_REPO_NAME/$PLUGIN_REPO_NAME/ucdlib-directory/src/editor
+)

@@ -24,4 +24,6 @@ $GIT_CLONE $WEBSITE_REPO_URL.git \
 
 cd $REPOSITORY_DIR/$WEBSITE_REPO_NAME
 git submodule update --init --recursive
+cd $THEME_REPO_NAME && git checkout $WP_THEME_SUB_TAG
+cd ../$PLUGIN_REPO_NAME && git checkout $WP_PLUGINS_SUB_TAG
 cd $ROOT_DIR/..

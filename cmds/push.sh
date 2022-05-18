@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ###
-# Push docker image and $CONTAINER_CACHE_TAG (currently :latest) tag to docker hub
+# Push docker image and $CONTAINER_CACHE_TAG (currently $CONTAINER_CACHE_TAG) tag to docker hub
 ###
 
 set -e
@@ -11,7 +11,7 @@ source config.sh
 
 docker tag $WEBSITE_IMAGE_NAME_TAG $WEBSITE_IMAGE_NAME:$CONTAINER_CACHE_TAG
 docker tag $INIT_IMAGE_NAME_TAG $INIT_IMAGE_NAME:$CONTAINER_CACHE_TAG
-docker tag $INDEXER_IMAGE_NAME $INDEXER_IMAGE_NAME:$CONTAINER_CACHE_TAG
+docker tag $INDEXER_IMAGE_NAME_TAG $INDEXER_IMAGE_NAME:$CONTAINER_CACHE_TAG
 
 for image in "${ALL_DOCKER_BUILD_IMAGE_TAGS[@]}"; do
   docker push $image || true

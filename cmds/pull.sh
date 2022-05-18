@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ###
-# Pull :latest docker images to help speed up builds
+# Pull $CONTAINER_CACHE_TAG docker images to help speed up builds
 # Mostly used for gcloud build.  But can be used for 
 # first time local builds as well
 ###

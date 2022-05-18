@@ -7,11 +7,13 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - [Wordpress](https://developer.wordpress.org/)
   - [Wordpress CLI](https://wp-cli.org/)
   - [Mysql](https://www.mysql.com/)
-  - [Elasticsearch](https://www.elastic.co/elasticsearch/)
+  - [Elasticsearch](https://www.elastic.co/elasticsearch/) and [Kibana](https://www.elastic.co/kibana/)
   - [Adminer (local development only)](https://www.adminer.org/)
 - Custom Git Repositories
   - [Primary Theme](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
   - [Additional Plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
+  - [ES Indexer](https://github.com/UCDavisLibrary/main-wp-website/tree/stage/elastic-search)
+  - [Data init and backup services](https://github.com/UCDavisLibrary/main-wp-website-deployment/tree/stage/init)
 
 ## Local Development
 
@@ -36,19 +38,21 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - `SERVER_URL`: where your local wp instance will live. defaults to `http://localhost:3000`
   - `HOST_PORT`: host port for the wp instance. defaults to `3000`
   - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
-  - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on React debugging set this to: `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);`
+  - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on all debugging for development, set to: `define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);`
   - `RUN_INIT`: Run data hydration on cold start
 - Build the `local-dev` tagged images:
   - `./cmds/build-local-dev.sh`
+- Install all npm packages:
+  - `./cmds/install-private-packages.sh`
+- Run the JS watch processes at least once to generate bundles (see section below)
 
 Your development environment should now have all the necessary pieces in place. The next section goes over how to start everything up.
 
 ### Making Changes in Local Development
 - Make sure you followed all the steps in the local-dev inital setup section above.
-- By default, the site loads the dev public and editor theme bundles, which are created by watch processes. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `repositories/ucdlib-theme-wp` and run:
+- By default, the site loads the dev public and editor js bundles, which are created by two watch processes in the `ucdlib-assets` plugin. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `repositories/main-wp-website/ucdlib-wp-plugins/ucdlib-assets` and run:
   - `cd src/public; npm run watch`
   - `cd src/editor; npm run watch`
-- By default, plugins run off their dist JS code. To use the watch process for a plugin, enable it in your `local-dev` env file by adding `UCD_PLUGIN_<PLUGIN_NAME>_ENV=dev` and then start its watch process.
 - Bring the site up by starting the docker compose stack:
   - `cd website-local-dev; docker compose up`
 - Code directories are mounted as volumes so changes to your host filesystem are reflected in container.
