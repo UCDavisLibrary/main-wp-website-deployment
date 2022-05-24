@@ -11,5 +11,5 @@ cd $ROOT_DIR/..
 source ./config.sh
 
 for package in "${NPM_PRIVATE_PACKAGES[@]}"; do
-  (cd $package && $NPM i)
+  (cd $package && $NPM i && $NPM run init-bundle || true)
 done

@@ -65,7 +65,7 @@ services:
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-reader-key.json}
     depends_on:
       - db
       - wordpress
@@ -87,7 +87,7 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-reader-key.json}      
     depends_on:
       - db
       - wordpress
@@ -108,13 +108,14 @@ services:
     ports:
       - 3001:3000
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-writer-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-writer-key.json}
     depends_on:
       - elasticsearch
     volumes:
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/lib:/service/lib
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/index.js:/service/index.js
       - ../main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
+      - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
     # command: bash -c "tail -f /dev/null"
 
   db:
