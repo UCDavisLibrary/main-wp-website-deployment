@@ -5,6 +5,8 @@
 # directory as this main-wp-website-deployment folder.
 # Note: This script does not checkout any repository, it simply cleans the /repositories folders
 # and makes the symbolic links
+# 
+# also installs npm dependencies and generates dev bundles
 ###
 
 set -e
@@ -30,3 +32,6 @@ done
 )
 
 ls -al $REPOSITORY_DIR
+
+./cmds/install-private-packages.sh
+./cmds/generate-dev-bundles.sh
