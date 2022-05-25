@@ -36,7 +36,7 @@ docker run --rm -v $(pwd):/workspace \
   gcr.io/kaniko-project/executor:latest \
   --cache=true \
   --cache-ttl=720h \
-  --snapshotMode=redo \
+  --snapshotMode=full \
   --cache-copy-layers=true \
   --destination=$WEBSITE_IMAGE_NAME_TAG \
   --build-arg=BUILDKIT_INLINE_CACHE=1 \
