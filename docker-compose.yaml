@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:sandbox
     env_file:
       - .env
     ports:
@@ -46,7 +46,7 @@ services:
       - elasticsearch
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:sandbox
     env_file:
       - .env
     environment:
@@ -66,7 +66,7 @@ services:
 
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:sandbox
     env_file:
       - .env
     environment:
@@ -88,7 +88,7 @@ services:
     command: "/backup_entrypoint.sh"
 
   indexer:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:sandbox
     env_file:
       - .env
     ports:
