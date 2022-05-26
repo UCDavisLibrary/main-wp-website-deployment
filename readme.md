@@ -21,8 +21,8 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 - Clone this repository
   - `git clone`
 - Checkout the branch you want to work on, e.g.:
-  - `git checkout dev`
-- In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORATANT: Make sure you checkout to the branches you wish to work on for each repository.
+  - `git checkout sandbox`
+- In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORTANT: Make sure you checkout to the branches you wish to work on for each repository.
 - Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`. 
 - Grab service account so the `init` container can access website snapshot bucket
   - Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
@@ -40,10 +40,6 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
   - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on all debugging for development, set to: `define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);`
   - `RUN_INIT`: Run data hydration on cold start
-- Build the `local-dev` tagged images:
-  - `./cmds/build-local-dev.sh`
-- Install all npm packages:
-  - `./cmds/install-private-packages.sh`
 - Run the JS watch processes at least once to generate bundles (see section below)
 
 Your development environment should now have all the necessary pieces in place. The next section goes over how to start everything up.
@@ -80,6 +76,14 @@ Here are some common parameters:
 | WORDPRESS_DB_PASSWORD | Password of mysql database used by site. defaults to `wordpress` |
 | WORDPRESS_DB_USER | User of mysql database used by site. defaults to `wordpress` |
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
-| BACKUP_ENV | Directory with snapshot data in Google bucket |
+| BACKUP_ENV | Google bucket to write nightly backups to |
+| DATA_ENV | Google bucket to pull data from if db/uploads folder are empty |
+
+Here is a good env for local development:
+```
+WORDPRESS_DEBUG=1
+WORDPRESS_CONFIG_EXTRA=define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);
+DATA_ENV=stage
+```
 
 
