@@ -43,7 +43,7 @@ else
     gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${DATA_ENV}/${MYSQL_DUMP_FILE}" /$MYSQL_DUMP_FILE
 
     echo "Loading sql dump file"
-    zcat /$MYSQL_DUMP_FILE | mysql
+    zcat /$MYSQL_DUMP_FILE | mysql -f
     rm /$MYSQL_DUMP_FILE
 
     BACKUP_SERVER_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
