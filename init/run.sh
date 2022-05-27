@@ -55,6 +55,10 @@ else
     mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
     mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
 
+    if [[ ! -z $SITE_TAGLINE ]]; then
+      mysql -e "update wp_options set option_value='${SITE_TAGLINE}' where option_name='blogdescription';"
+    fi
+
     echo "Starting full elastic search reindex"
     curl http://indexer:3000/reindex
 

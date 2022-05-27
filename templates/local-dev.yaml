@@ -67,6 +67,7 @@ services:
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
       GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+      SITE_TAGLINE: ${SITE_TAGLINE:-localhost}
     depends_on:
       - db
       - wordpress
