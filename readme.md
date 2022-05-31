@@ -68,7 +68,7 @@ If you need to update your snapshot or use a different one entirely:
 Here are some common parameters:
 | Param | Description |
 | ----- | ----------- |
-| SERVER_URL | Your wordpress site url/blog address i.e. `https://rebrand.library.ucdavis.edu` or `http://localhost:3000`| 
+| SERVER_URL | Your wordpress site url/blog address i.e. `https://stage.library.ucdavis.edu` or `http://localhost:3000`| 
 | WORDPRESS_DEBUG | Set to `1` to turn wp's php debug mode. Nice for local development. |
 | WORDPRESS_CONFIG_EXTRA | Set arbitrary `wp-config` values. `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);` will turn on the React debug tool. |
 | HOST_PORT | Port where site is hosted. Defaults to `8000` |
@@ -78,12 +78,14 @@ Here are some common parameters:
 | MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
 | BACKUP_ENV | Google bucket to write nightly backups to |
 | DATA_ENV | Google bucket to pull data from if db/uploads folder are empty |
+| UCD_CAS_ENSURE_USERS | Takes a comma-separated list of kerberos ids. guarantees specified users admin access to site |
 
 Here is a good env for local development:
 ```
 WORDPRESS_DEBUG=1
 WORDPRESS_CONFIG_EXTRA=define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);
 DATA_ENV=stage
+UCD_CAS_ENSURE_USERS=yourKerberos
 ```
 
 
