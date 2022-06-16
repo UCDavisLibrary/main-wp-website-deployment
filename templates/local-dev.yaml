@@ -25,6 +25,7 @@ services:
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-migration:{{WP_PLUGIN_DIR}}/ucdlib-migration
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-search:{{WP_PLUGIN_DIR}}/ucdlib-search
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-directory:{{WP_PLUGIN_DIR}}/ucdlib-directory
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-special:{{WP_PLUGIN_DIR}}/ucdlib-special
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
