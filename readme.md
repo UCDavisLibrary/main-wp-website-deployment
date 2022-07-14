@@ -41,6 +41,8 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
   - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on all debugging for development, set to: `define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);`
   - `RUN_INIT`: Run data hydration on cold start
 - Run the JS watch processes at least once to generate bundles (see section below)
+- Build your local dev images by running:
+  - `./cmds/build-local-dev.sh`
 
 Your development environment should now have all the necessary pieces in place. The next section goes over how to start everything up.
 
