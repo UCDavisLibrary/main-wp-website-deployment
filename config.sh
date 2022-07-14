@@ -117,8 +117,8 @@ INIT_DIR=init
 INDEXER_DIR=$REPOSITORY_DIR/$WEBSITE_REPO_NAME/elastic-search
 
 # wp directories
-WP_UCD_THEME_DIR=/var/www/html/wp-content/themes/$THEME_REPO_NAME
-WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+WP_UCD_THEME_DIR=/usr/src/wordpress/wp-content/themes/$THEME_REPO_NAME
+WP_PLUGIN_DIR=/usr/src/wordpress/wp-content/plugins
 
 # NPM
 NPM=npm

@@ -15,8 +15,12 @@ services:
         define('WP_SITEURL', '${SERVER_URL}' );
         define('WP_HOME', '${SERVER_URL}' );
         define('FORCE_SSL_ADMIN', true);
+    tmpfs:
+      - /run
+      - /tmp
     volumes:
-      - uploads-data:/var/www/html/wp-content/uploads
+      - uploads-data:/usr/src/wordpress/wp-content/uploads
+      - wp-logs-data:/var/log/wordpress
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
@@ -116,5 +120,6 @@ services:
 volumes:
   db-data:
   uploads-data:
+  wp-logs-data:
   backup-data:
   es-data:
