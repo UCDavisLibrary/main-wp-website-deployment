@@ -1,0 +1,2 @@
+0 3 * * * /cmds/backup.sh >> /var/log/cron.log
+

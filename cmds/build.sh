@@ -32,13 +32,13 @@ docker build \
   $REPOSITORY_DIR/$WEBSITE_REPO_NAME
 
 ##
-# Init/Data back and hydration helper
+# Init Data back and hydration helper and monitoring image
 ## 
 docker build \
-  -t $INIT_IMAGE_NAME_TAG \
+  -t $UTILS_IMAGE_NAME_TAG \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
-  --cache-from=$INIT_IMAGE_NAME:$CONTAINER_CACHE_TAG \
-  $INIT_DIR
+  --cache-from=$UTILS_IMAGE_NAME:$CONTAINER_CACHE_TAG \
+  $UTILS_DIR
 
 ##
 # Elastic Search Indexer
