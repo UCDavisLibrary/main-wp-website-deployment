@@ -57,10 +57,10 @@ docker run --rm -v $(pwd):/workspace \
   gcr.io/kaniko-project/executor:latest \
   --cache=true \
   --cache-ttl=720h \
-  --destination=$INIT_IMAGE_NAME_TAG \
+  --destination=$UTILS_IMAGE_NAME_TAG \
   --build-arg=BUILDKIT_INLINE_CACHE=1 \
-  --context=$INIT_DIR \
-  --dockerfile=$INIT_DIR/Dockerfile
+  --context=$UTILS_DIR \
+  --dockerfile=$UTILS_DIR/Dockerfile
 
 ##
 # Elastic Search Indexer
