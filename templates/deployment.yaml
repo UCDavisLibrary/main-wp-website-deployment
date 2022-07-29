@@ -63,7 +63,7 @@ services:
     command: /cmds/monitor.sh
 
   init:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
     env_file:
       - .env
     environment:
@@ -84,7 +84,7 @@ services:
     command: /cmds/init.sh
 
   backup:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
     env_file:
       - .env
     environment:

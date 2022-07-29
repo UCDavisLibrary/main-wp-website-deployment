@@ -63,7 +63,7 @@ services:
     command: /cmds/monitor.sh
 
   init:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
@@ -84,7 +84,7 @@ services:
     command: /cmds/init.sh
 
   backup:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
