@@ -37,6 +37,7 @@ docker build \
 docker build \
   -t $UTILS_IMAGE_NAME_TAG \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
+  --build-arg BASE_IMAGE=${WEBSITE_IMAGE_NAME_TAG} \
   --cache-from=$UTILS_IMAGE_NAME:$CONTAINER_CACHE_TAG \
   $UTILS_DIR
 

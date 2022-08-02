@@ -1,4 +1,5 @@
-FROM debian:buster
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
 
 ARG NODE_VERSION=16
 
@@ -26,8 +27,8 @@ RUN apt-get update && apt-get install -y mariadb-client \
   wait-for-it google-cloud-sdk nodejs
 
 
-RUN mkdir /cmds
-WORKDIR /cmds
+RUN mkdir /util-cmds
+WORKDIR /util-cmds
 
 COPY package.json .
 COPY package-lock.json .
@@ -35,6 +36,7 @@ RUN npm install --production
 
 COPY init.sh init.sh
 COPY backup.sh backup.sh
+COPY tail.sh tail.sh
 
 # COPY ./monitoring/apache.conf /etc/stackdriver/collectd.d/apache.conf
 # COPY ./monitoring/config.yaml /etc/google-cloud-ops-agent/config.yaml
@@ -47,3 +49,11 @@ COPY ./monitoring/monitor.sh monitor.sh
 COPY backup-cron /etc/cron.d/backup
 COPY backup_entrypoint.sh backup_entrypoint.sh
 RUN chmod 0644 /etc/cron.d/backup
+
+COPY wp-scripts wp-scripts
+
+WORKDIR $WP_SRC_ROOT
+
+ENTRYPOINT [ "sh", "-c" ]
+#ENTRYPOINT [ "bash", "-c" ]
+CMD ["echo 'Use command arg to specify a script to run.'"]

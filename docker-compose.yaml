@@ -60,7 +60,7 @@ services:
       - wordpress
     volumes:
       - ./main-website-content-writer-key.json:/etc/service-account.json
-    command: /cmds/monitor.sh
+    command: /util-cmds/monitor.sh
 
   init:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
@@ -81,7 +81,7 @@ services:
     volumes:
       - uploads-data:/uploads
       - ./main-website-content-reader-key.json:/etc/service-account.json
-    command: /cmds/init.sh
+    command: /util-cmds/init.sh
 
   backup:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
@@ -103,7 +103,7 @@ services:
       - uploads-data:/uploads
       - backup-data:/snapshots
       - ./main-website-content-writer-key.json:/etc/service-account.json
-    command: "/cmds/backup_entrypoint.sh"
+    command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:sandbox
@@ -129,6 +129,10 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
 
 volumes:
   db-data:

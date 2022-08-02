@@ -4,6 +4,7 @@ GOOGLE_CLOUD_BUCKET=website-v3-content
 GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
 UPLOADS_TAR_FILE=uploads.tar.gz
 UPLOADS_DIR=/uploads
+WP_SCRIPTS_DIR=/util-cmds/wp-scripts
 MYSQL_DUMP_FILE=main-wp-website.sql.gz
 WP_SERVER_URL=${SERVER_URL:-http://localhost:3000}
 
@@ -23,14 +24,14 @@ alias mysql="mysql --user=$WORDPRESS_DB_USER --host=$WORDPRESS_DB_JUST_HOST --po
 wait-for-it $WORDPRESS_DB_JUST_HOST:$WORDPRESS_DB_JUST_PORT -t 0
 
 function updateDbHost {
-  BACKUP_SERVER_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
-  echo "Updating links from ${BACKUP_SERVER_URL} to ${WP_SERVER_URL}"
+  DATA_ENV_URL=$(echo "SELECT option_value from wp_options WHERE option_name='siteurl' LIMIT 1" | mysql -s)
+  echo "Updating links from ${DATA_ENV_URL} to ${WP_SERVER_URL}"
   
   mysql -e "update wp_options set option_value='${WP_SERVER_URL}' where option_name='siteurl';"
   mysql -e "update wp_options set option_value='${WP_SERVER_URL}' where option_name='home';"
-  mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
-  mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
-  mysql -e "UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, '${BACKUP_SERVER_URL}', '${WP_SERVER_URL}');"
+  mysql -e "UPDATE wp_posts SET post_content = REPLACE(post_content, '${DATA_ENV_URL}', '${WP_SERVER_URL}');"
+  mysql -e "UPDATE wp_posts SET guid = REPLACE(guid, '${DATA_ENV_URL}', '${WP_SERVER_URL}');"
+  wp eval-file ${WP_SCRIPTS_DIR}/update-host.php ${DATA_ENV_URL} ${WP_SERVER_URL}  --allow-root
 
   if [[ ! -z $SITE_TAGLINE ]]; then
     mysql -e "update wp_options set option_value='${SITE_TAGLINE}' where option_name='blogdescription';"

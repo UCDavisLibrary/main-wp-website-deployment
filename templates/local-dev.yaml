@@ -74,11 +74,11 @@ services:
       - db
       - wordpress
     volumes:
-      - ../utils/monitoring/monitor.sh:/cmds/monitor.sh
-      - ../utils/monitoring/apache.js:/cmds/apache.js
+      - ../utils/monitoring/monitor.sh:/util-cmds/monitor.sh
+      - ../utils/monitoring/apache.js:/util-cmds/apache.js
       - ../main-website-content-writer-key.json:/etc/service-account.json
-    # command: bash -c "tail -f /dev/null"
-    command: /cmds/monitor.sh
+    # command: /util-cmds/tail.sh
+    command: /util-cmds/monitor.sh
 
   init:
     image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
@@ -86,7 +86,6 @@ services:
       - .env
     environment:
       RUN_INIT: "true"
-      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
@@ -100,10 +99,10 @@ services:
       - wordpress
     volumes:
       - uploads-data:/uploads
-      - ../utils/init.sh:/cmds/init.sh
+      - ../utils/init.sh:/util-cmds/init.sh
       - ../main-website-content-reader-key.json:/etc/service-account.json
-    # command: bash -c "tail -f /dev/null"
-    command: /cmds/init.sh
+    # command: /util-cmds/tail.sh
+    command: /util-cmds/init.sh
 
   backup:
     image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
@@ -128,8 +127,8 @@ services:
       - ../utils/backup.sh:/cmds/backup.sh
       - ../utils/backup-cron:/etc/cron.d/backup 
       - ../main-website-content-writer-key.json:/etc/service-account.json
-    command: bash -c "tail -f /dev/null"
-    # command: "/cmds/backup_entrypoint.sh"
+    command: /util-cmds/tail.sh
+    # command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
@@ -158,6 +157,10 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
     volumes:
       - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
 
   adminer:
     image: {{ADMINER_IMAGE_NAME}}:{{ADMINER_TAG}}
