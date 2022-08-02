@@ -59,6 +59,7 @@ docker run --rm -v $(pwd):/workspace \
   --cache-ttl=720h \
   --destination=$UTILS_IMAGE_NAME_TAG \
   --build-arg=BUILDKIT_INLINE_CACHE=1 \
+  --build-arg=BASE_IMAGE=${WEBSITE_IMAGE_NAME_TAG} \
   --context=$UTILS_DIR \
   --dockerfile=$UTILS_DIR/Dockerfile
 
