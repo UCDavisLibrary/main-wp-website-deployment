@@ -46,6 +46,10 @@ else
     echo "Loading sql dump file"
     zcat /$MYSQL_DUMP_FILE | mysql -f
     rm /$MYSQL_DUMP_FILE
+
+		echo "Starting full elastic search reindex"
+		curl http://indexer:3000/reindex
+
   else
     echo "WP data found in ${WORDPRESS_DB_JUST_HOST}:${WORDPRESS_DB_JUST_PORT}. Skipping hydration."
   fi
@@ -86,9 +90,6 @@ else
   if [[ ! -z $SITE_TAGLINE ]]; then
     mysql -e "update wp_options set option_value='${SITE_TAGLINE}' where option_name='blogdescription';"
   fi
-
-  echo "Starting full elastic search reindex"
-  curl http://indexer:3000/reindex
 
   # check uploads folder
   UPLOADS_FILE_COUNT=$(ls -1q $UPLOADS_DIR | wc -l)
