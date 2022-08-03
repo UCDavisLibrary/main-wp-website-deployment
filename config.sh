@@ -19,7 +19,7 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
 WEBSITE_TAG=stage
-INIT_TAG=stage
+UTILS_TAG=stage
 
 # Submodules
 # only used for init-local-dev checkout
