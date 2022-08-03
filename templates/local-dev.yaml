@@ -6,6 +6,7 @@ services:
       - .env
     ports:
       - ${HOST_PORT:-3000}:80
+      - ${STATUS_HOST_PORT:-3002}:8080
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
@@ -13,12 +14,15 @@ services:
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
       WORDPRESS_DEBUG_DISPLAY: ${WORDPRESS_DEBUG_DISPLAY:-1}
+      WORDPRESS_DISABLE_FATAL_ERROR_HANDLER: ${WORDPRESS_DISABLE_FATAL_ERROR_HANDLER:-1}
       UCD_CAS_HOST: ${UCD_CAS_HOST:-ssodev.ucdavis.edu}
       UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
     tmpfs:
       - /run
       - /tmp
     volumes:
+      - ../main-website-content-writer-key.json:/etc/service-account.json
       - uploads-data:/usr/src/wordpress/wp-content/uploads
       - wp-logs-data:/var/log/wordpress
       # theme
@@ -31,6 +35,7 @@ services:
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-search:{{WP_PLUGIN_DIR}}/ucdlib-search
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-directory:{{WP_PLUGIN_DIR}}/ucdlib-directory
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{PLUGIN_REPO_NAME}}/ucdlib-special:{{WP_PLUGIN_DIR}}/ucdlib-special
+      - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/monitoring/status.conf:/etc/apache2/conf-available/status.conf
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
@@ -59,32 +64,48 @@ services:
     depends_on:
       - elasticsearch
 
+  monitoring:
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ../utils/monitoring/monitor.sh:/util-cmds/monitor.sh
+      - ../utils/monitoring/apache.js:/util-cmds/apache.js
+      - ../main-website-content-writer-key.json:/etc/service-account.json
+    # command: /util-cmds/tail.sh
+    command: /util-cmds/monitor.sh
+
   init:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
     env_file:
       - .env
     environment:
       RUN_INIT: "true"
-      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-reader-key.json}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
       SITE_TAGLINE: ${SITE_TAGLINE:-localhost}
     depends_on:
       - db
       - wordpress
     volumes:
       - uploads-data:/uploads
-      - ../init/run.sh:/run.sh
-      - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
-    # command: bash -c "tail -f /dev/null"
+      - ../utils/init.sh:/util-cmds/init.sh
+      - ../main-website-content-reader-key.json:/etc/service-account.json
+    # command: /util-cmds/tail.sh
+    command: /util-cmds/init.sh
 
   backup:
-    image: {{INIT_IMAGE_NAME}}:{{INIT_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
     env_file:
       - .env
     environment:
@@ -95,19 +116,19 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-reader-key.json}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
     depends_on:
       - db
       - wordpress
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
-      - ../init/backup_entrypoint.sh:/backup_entrypoint.sh
-      - ../init/backup.sh:/backup.sh
-      - ../init/backup-cron:/etc/cron.d/backup 
-      - ../main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
-    command: bash -c "tail -f /dev/null"
-    # command: "/backup_entrypoint.sh"
+      - ../utils/backup_entrypoint.sh:/cmds/backup_entrypoint.sh
+      - ../utils/backup.sh:/cmds/backup.sh
+      - ../utils/backup-cron:/etc/cron.d/backup 
+      - ../main-website-content-writer-key.json:/etc/service-account.json
+    command: /util-cmds/tail.sh
+    # command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
@@ -116,14 +137,13 @@ services:
     ports:
       - 3001:3000
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/main-website-content-writer-key.json}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
     depends_on:
       - elasticsearch
     volumes:
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/lib:/service/lib
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/elastic-search/index.js:/service/index.js
-      - ../main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
-      - ../main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
+      - ../main-website-content-writer-key.json:/etc/service-account.json
     # command: bash -c "tail -f /dev/null"
 
   db:
@@ -137,6 +157,10 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
     volumes:
       - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
 
   adminer:
     image: {{ADMINER_IMAGE_NAME}}:{{ADMINER_TAG}}

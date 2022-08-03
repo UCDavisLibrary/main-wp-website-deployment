@@ -49,8 +49,21 @@ services:
     depends_on:
       - elasticsearch
 
+  monitoring:
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:{{UTILS_TAG}}
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ./main-website-content-writer-key.json:/etc/service-account.json
+    command: /util-cmds/monitor.sh
+
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:{{UTILS_TAG}}
     env_file:
       - .env
     environment:
@@ -61,17 +74,17 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
     depends_on:
       - db
       - wordpress
     volumes:
       - uploads-data:/uploads
-      - ./main-website-content-reader-key.json:/etc/main-website-content-reader-key.json
-
+      - ./main-website-content-reader-key.json:/etc/service-account.json
+    command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-init:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:{{UTILS_TAG}}
     env_file:
       - .env
     environment:
@@ -82,15 +95,15 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-reader-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
     depends_on:
       - db
       - wordpress
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
-      - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
-    command: "/backup_entrypoint.sh"
+      - ./main-website-content-writer-key.json:/etc/service-account.json
+    command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:stage
@@ -99,11 +112,11 @@ services:
     ports:
       - ${INDEXER_HOST_PORT:-8001}:3000
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /etc/main-website-content-writer-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
     depends_on:
       - elasticsearch
     volumes:
-      - ./main-website-content-writer-key.json:/etc/main-website-content-writer-key.json
+      - ./main-website-content-writer-key.json:/etc/service-account.json
 
   db:
     image: mysql:5.7
@@ -116,6 +129,10 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
 
 volumes:
   db-data:
