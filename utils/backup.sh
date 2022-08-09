@@ -5,7 +5,7 @@ source /etc/profile
 # TODO: move to .env ?
 GOOGLE_CLOUD_BUCKET=website-v3-content
 GOOGLE_CLOUD_PROJECT=digital-ucdavis-edu
-GOOGLE_APPLICATION_CREDENTIALS=/etc/main-website-content-writer-key.json
+GOOGLE_APPLICATION_CREDENTIALS=/etc/service-account.json
 SNAPSHOTS_DIR=/snapshots
 UPLOAD_DIR=/uploads
 
