@@ -18,13 +18,13 @@ APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=stage
-UTILS_TAG=stage
+WEBSITE_TAG=sandbox
+UTILS_TAG=sandbox
 
 # Submodules
 # only used for init-local-dev checkout
-WP_PLUGINS_SUB_TAG=stage
-WP_THEME_SUB_TAG=stage
+WP_PLUGINS_SUB_TAG=sandbox
+WP_THEME_SUB_TAG=sandbox
 
 CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [[ -f "$CONFIG_DIR/main-website-content-reader-key.json" ]]; then
