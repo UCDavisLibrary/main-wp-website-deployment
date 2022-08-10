@@ -100,6 +100,7 @@ services:
     volumes:
       - uploads-data:/uploads
       - ../utils/init.sh:/util-cmds/init.sh
+      - ../utils/wp-scripts:/util-cmds/wp-scripts
       - ../main-website-content-reader-key.json:/etc/service-account.json
     # command: /util-cmds/tail.sh
     command: /util-cmds/init.sh
@@ -125,6 +126,7 @@ services:
       - backup-data:/snapshots
       - ../utils/backup_entrypoint.sh:/cmds/backup_entrypoint.sh
       - ../utils/backup.sh:/cmds/backup.sh
+      - ../utils/wp-scripts:/util-cmds/wp-scripts
       - ../utils/backup-cron:/etc/cron.d/backup 
       - ../main-website-content-writer-key.json:/etc/service-account.json
     command: /util-cmds/tail.sh
