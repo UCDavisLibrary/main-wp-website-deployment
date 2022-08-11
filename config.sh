@@ -13,18 +13,17 @@ fi
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v3.0.0-alpha.${BUILD_NUM}
+APP_VERSION=v3.0.0.${BUILD_NUM}
 
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=stage
-UTILS_TAG=stage
+WEBSITE_TAG=v3.0.0
 
 # Submodules
 # only used for init-local-dev checkout
-WP_PLUGINS_SUB_TAG=stage
-WP_THEME_SUB_TAG=stage
+WP_PLUGINS_SUB_TAG=v3.0.0
+WP_THEME_SUB_TAG=v3.0.0
 
 CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [[ -f "$CONFIG_DIR/main-website-content-reader-key.json" ]]; then
@@ -50,7 +49,7 @@ else
   CONTAINER_CACHE_TAG=$BRANCH_NAME
 fi
 
-# set localhost/local-dev used by 
+# set localhost/local-dev used by
 # local development docker-compose file
 if [[ ! -z $LOCAL_BUILD ]]; then
   CONTAINER_REG_ORG='localhost/local-dev'
@@ -70,7 +69,7 @@ WEBSITE_IMAGE_NAME_TAG=$WEBSITE_IMAGE_NAME:$WEBSITE_TAG
 INDEXER_IMAGE_NAME_TAG=$INDEXER_IMAGE_NAME:$WEBSITE_TAG
 MYSQL_IMAGE_NAME_TAG=$MYSQL_IMAGE_NAME:$MYSQL_TAG
 ADMINER_IMAGE_NAME_TAG=$ADMINER_IMAGE_NAME:$ADMINER_TAG
-UTILS_IMAGE_NAME_TAG=$UTILS_IMAGE_NAME:$UTILS_TAG
+UTILS_IMAGE_NAME_TAG=$UTILS_IMAGE_NAME:$WEBSITE_TAG
 MONITORING_IMAGE_NAME_TAG=$MONITORING_IMAGE_NAME:$WEBSITE_TAG
 
 ALL_DOCKER_BUILD_IMAGES=( $WEBSITE_IMAGE_NAME $UTILS_IMAGE_NAME $INDEXER_IMAGE_NAME )

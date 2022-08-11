@@ -65,7 +65,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
     environment:
@@ -81,7 +81,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
     environment:
@@ -106,7 +106,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
     env_file:
       - .env
     environment:
@@ -127,7 +127,7 @@ services:
       - ../utils/backup_entrypoint.sh:/cmds/backup_entrypoint.sh
       - ../utils/backup.sh:/cmds/backup.sh
       - ../utils/wp-scripts:/util-cmds/wp-scripts
-      - ../utils/backup-cron:/etc/cron.d/backup 
+      - ../utils/backup-cron:/etc/cron.d/backup
       - ../main-website-content-writer-key.json:/etc/service-account.json
     command: /util-cmds/tail.sh
     # command: "/util-cmds/backup_entrypoint.sh"
