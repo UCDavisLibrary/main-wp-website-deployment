@@ -90,4 +90,17 @@ DATA_ENV=stage
 UCD_CAS_ENSURE_USERS=yourKerberos
 ```
 
+## Production Deployment
+
+Here are the steps to deploy to blue and gold. Each new deployment should target the non-running instance, alternating betwen blue and gold.
+
+### Deployment Steps
+- SSH into the non-running instance, and `cd /etc/library-website/v3`
+- Drop volumes with `docker compose down -v`
+- Pull the latest from git with `git pull` and the latest images with `docker compose pull`
+- The first time bringing docker up and indexing, the port should be something other than `80`. In `/etc/library-website/v3/.env`, modify `HOST_PORT` to be something like `3003`.
+- Run `docker compose up`
+- At the moment the indexer can crash on the first run (will be fixed at some point). If the indexer crashes, restart it with `docker compose start indexer`
+- Once the indexer finishes completely, restart wordpress with the correct port by running `docker compose -rm -f -s wordpress`, then change the `.env` so `HOST_PORT` is `80`, and run `docker compose up -d wordpress`
+- At this point, the running instance could be brought down with `docker compose down`
 
