@@ -123,6 +123,10 @@ The router manages this by including a routing indicator in the clients cookies.
 The example below shows that the ROUTEID is set to `v3.gold` where `v3` is the
 major website version, and `gold` is the backend server.
 
+```bash
+curl -I https://library.ucdavis.edu
+```
+
 ```txt
 HTTP/1.1 200 OK
 Cache-Control: max-age=0
