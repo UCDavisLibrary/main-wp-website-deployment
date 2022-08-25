@@ -76,6 +76,8 @@ services:
     volumes:
       - ../utils/monitoring/monitor.sh:/util-cmds/monitor.sh
       - ../utils/monitoring/apache.js:/util-cmds/apache.js
+      - ../utils/monitoring/daily-updates.js:/util-cmds/daily-updates.js
+      - ../utils/monitoring/daily-updates.sql:/util-cmds/daily-updates.sql
       - ../main-website-content-writer-key.json:/etc/service-account.json
     # command: /util-cmds/tail.sh
     command: /util-cmds/monitor.sh
