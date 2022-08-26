@@ -6,9 +6,7 @@ services:
       - .env
     ports:
       - ${HOST_PORT:-8000}:80
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE}
@@ -27,9 +25,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
@@ -46,9 +42,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.16.3
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     ports:
       - ${KIBANA_HOST_PORT:-8002}:5601
     environment:
@@ -60,9 +54,7 @@ services:
 
   monitoring:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.1.0
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     env_file:
       - .env
     environment:
@@ -119,9 +111,7 @@ services:
 
   indexer:
     image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.1.0
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     env_file:
       - .env
     ports:
@@ -135,9 +125,7 @@ services:
 
   db:
     image: mysql:5.7
-    deploy:
-      restart_policy:
-        condition: any
+    restart: always
     env_file:
       - .env
     environment:
