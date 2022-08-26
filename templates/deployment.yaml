@@ -6,6 +6,9 @@ services:
       - .env
     ports:
       - ${HOST_PORT:-8000}:80
+    deploy:
+      restart_policy:
+        condition: any
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE}
@@ -24,6 +27,9 @@ services:
 
   elasticsearch:
     image: {{ELASTIC_SEARCH_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
@@ -40,6 +46,9 @@ services:
 
   kibana:
     image: {{KIBANA_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
     ports:
       - ${KIBANA_HOST_PORT:-8002}:5601
     environment:
@@ -50,7 +59,14 @@ services:
       - elasticsearch
 
   monitoring:
+<<<<<<< HEAD
     image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+=======
+    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
+>>>>>>> stage
     env_file:
       - .env
     environment:
@@ -107,6 +123,9 @@ services:
 
   indexer:
     image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
     env_file:
       - .env
     ports:
@@ -120,6 +139,9 @@ services:
 
   db:
     image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
     env_file:
       - .env
     environment:

@@ -1,11 +1,14 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.0.2
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.1.0
     env_file:
       - .env
     ports:
       - ${HOST_PORT:-8000}:80
+    deploy:
+      restart_policy:
+        condition: any
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE}
@@ -24,6 +27,9 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    deploy:
+      restart_policy:
+        condition: any
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
@@ -40,6 +46,9 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.16.3
+    deploy:
+      restart_policy:
+        condition: any
     ports:
       - ${KIBANA_HOST_PORT:-8002}:5601
     environment:
@@ -50,7 +59,14 @@ services:
       - elasticsearch
 
   monitoring:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.0.2
+<<<<<<< HEAD
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.1.0
+=======
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:{{UTILS_TAG}}
+    deploy:
+      restart_policy:
+        condition: any
+>>>>>>> stage
     env_file:
       - .env
     environment:
@@ -63,7 +79,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.0.2
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.1.0
     env_file:
       - .env
     environment:
@@ -84,7 +100,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.0.2
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.1.0
     env_file:
       - .env
     environment:
@@ -106,7 +122,10 @@ services:
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.0.2
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.1.0
+    deploy:
+      restart_policy:
+        condition: any
     env_file:
       - .env
     ports:
@@ -120,6 +139,9 @@ services:
 
   db:
     image: mysql:5.7
+    deploy:
+      restart_policy:
+        condition: any
     env_file:
       - .env
     environment:
