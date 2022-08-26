@@ -44,6 +44,8 @@ COPY tail.sh tail.sh
 # RUN echo "GOOGLE_APPLICATION_CREDENTIALS=/etc/service-account.json" >> /etc/default/stackdriver-agent
 # RUN echo "GOOGLE_APPLICATION_CREDENTIALS=/etc/service-account.json" >> /etc/default/google-cloud-ops-agent
 COPY ./monitoring/apache.js apache.js
+COPY ./monitoring/daily-updates.js daily-updates.js
+COPY ./monitoring/daily-updates.sql daily-updates.sql
 COPY ./monitoring/monitor.sh monitor.sh
 
 COPY backup-cron /etc/cron.d/backup
