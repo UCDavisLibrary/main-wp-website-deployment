@@ -12,7 +12,7 @@ const TABLE_HEADERS = ['Name', 'Type', 'User', 'Original Author', 'Revisions', '
 const FIELDS = ['post_name', 'type', 'updated_by', 'created_by', 'update_count', 'last_updated'];
 
 // parse host/port of db
-let host = process.env.WORDPRESS_DB_HOST || 'db';
+let host = process.env.WORDPRESS_DB_HOST || process.env.DB_HOST || 'db';
 let port = 3306;
 if( host.match(':') ) {
   port = host.split(':')[1];
@@ -25,9 +25,9 @@ const pool = mysql.createPool({
   connectionLimit : 3,
   host            : host,
   port            : port,
-  user            : process.env.WORDPRESS_DB_USER || 'wordpress',
-  password        : process.env.WORDPRESS_DB_PASSWORD || 'wordpress',
-  database        : process.env.WORDPRESS_DB_DATABASE || 'wordpress'
+  user            : process.env.WORDPRESS_DB_USER || process.env.DB_USER || 'wordpress',
+  password        : process.env.WORDPRESS_DB_PASSWORD || process.env.DB_PASSWORD || 'wordpress',
+  database        : process.env.WORDPRESS_DB_DATABASE || process.env.DB_DATABASE  || 'wordpress'
 });
 
 // setup cron job
@@ -91,4 +91,3 @@ function run() {
     webhook.send(createSlackMessage(results));
   });  
 }
-run();
