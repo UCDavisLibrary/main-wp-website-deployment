@@ -59,14 +59,10 @@ services:
       - elasticsearch
 
   monitoring:
-<<<<<<< HEAD
     image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.1.0
-=======
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:{{UTILS_TAG}}
     deploy:
       restart_policy:
         condition: any
->>>>>>> stage
     env_file:
       - .env
     environment:

@@ -59,14 +59,10 @@ services:
       - elasticsearch
 
   monitoring:
-<<<<<<< HEAD
     image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
-=======
-    image: {{UTILS_IMAGE_NAME}}:{{UTILS_TAG}}
     deploy:
       restart_policy:
         condition: any
->>>>>>> stage
     env_file:
       - .env
     environment:
