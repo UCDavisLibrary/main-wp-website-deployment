@@ -13,12 +13,12 @@ fi
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v3.1.2.${BUILD_NUM}
+APP_VERSION=v3.1.3.${BUILD_NUM}
 
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=v3.1.0
+WEBSITE_TAG=v3.1.1
 
 # Submodules
 # only used for init-local-dev checkout
