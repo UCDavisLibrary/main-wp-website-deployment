@@ -176,8 +176,52 @@ the non-running instance, alternating between blue and gold.
 
 ### Deployment Steps
 
+#### Updating Code and Images
+Before deploying, we need to make sure we have the updated code ready to go and accessible by blue/gold.
+
+First, the relevant submodules should be updated and tagged. For `ucdlib-wp-plugins` and/or `ucdlib-theme-wp`:
+```bash
+git checkout main
+git merge stage --ff-only
+git push
+git tag v3.x.y
+git push origin --tags
+```
+
+Next, the same sort of thing needs to happen on the primary repo `main-wp-website`
+```bash
+git checkout main
+git merge stage --ff-only
+git push
+```
+Go to github and verify you have the correct submodule hashes, and then:
+```bash
+git tag v3.x.y
+git push origin --tags
+```
+
+Head on over to the deployment repo: `main-wp-website-deployment`
+```bash
+git checkout main
+git merge stage
+```
+
+Update the version numbers in `config.sh` and run `./cmds/generate-deployment-files`. Finish merging, commit and tag.
+```bash
+git add --all
+git commit
+git push
+git tag v3.x.y
+git push origin --tags
+```
+
+Build your images with `./cmds/submit.sh`. You will get a slack update in `os-gcb-notifications` - verify the `TAG_NAME` property is what you expect.
+
+#### Identify server
 Since we switch between blue and gold servers, you are never really sure which
-is in production, 
+is in production, so you have to check the ROUTEID cookie with `curl -I https://library.ucdavis.edu`.
+
+Fill in the following instructions with this value:
 
 ```bash
 cur=gold # or blue
@@ -222,6 +266,11 @@ versions.
   git pull 
   dc pull
 ```
+
+If you run into an error when pulling the images, one of the following might be your issue:
+- docker is not authorized to pull images: `gcloud auth configure-docker`
+- you are not logged into gcloud: `gcloud auth login`
+- you have the wrong project set: `gcloud config set project digital-ucdavis-edu`
 
 The first time bringing docker up and indexing, the port should be something
 other than `80`. In `/etc/library-website/v3/.env`, modify `HOST_PORT` to be
