@@ -13,17 +13,17 @@ fi
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v3.1.3.${BUILD_NUM}
+APP_VERSION=v3.1.4.${BUILD_NUM}
 
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=v3.1.1
+WEBSITE_TAG=v3.1.4
 
 # Submodules
 # only used for init-local-dev checkout
-WP_PLUGINS_SUB_TAG=v3.1.0
-WP_THEME_SUB_TAG=v3.1.0
+WP_PLUGINS_SUB_TAG=v3.1.4
+WP_THEME_SUB_TAG=v3.1.4
 
 CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [[ -f "$CONFIG_DIR/main-website-content-reader-key.json" ]]; then
