@@ -37,7 +37,7 @@ docker run --rm -v $(pwd):/workspace \
   --cache=true \
   --cache-ttl=720h \
   --snapshotMode=redo \
-  --cache-copy-layers=true \
+  --cache-copy-layers=false \
   --destination=$WEBSITE_IMAGE_NAME_TAG \
   --build-arg=BUILDKIT_INLINE_CACHE=1 \
   --build-arg=GOOGLE_KEY_FILE_CONTENT="${GOOGLE_KEY_FILE_CONTENT}" \
