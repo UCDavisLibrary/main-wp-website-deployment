@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.2.0
     env_file:
       - .env
     ports:
@@ -53,7 +53,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.0
     restart: always
     env_file:
       - .env
@@ -67,7 +67,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.0
     env_file:
       - .env
     environment:
@@ -88,7 +88,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.0
     env_file:
       - .env
     environment:
@@ -110,7 +110,7 @@ services:
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:stage
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.2.0
     restart: always
     env_file:
       - .env
