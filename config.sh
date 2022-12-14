@@ -13,16 +13,16 @@ fi
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v3.2.0.${BUILD_NUM}
+APP_VERSION=v3.2.1.${BUILD_NUM}
 
 # Repository tags/branchs
 # Tags should always be used for production deployments
 # Branches can be used for development deployments
-WEBSITE_TAG=v3.2.0
+WEBSITE_TAG=v3.2.1
 
 # Submodules
 # only used for init-local-dev checkout
-WP_PLUGINS_SUB_TAG=v3.2.0
+WP_PLUGINS_SUB_TAG=v3.2.1
 WP_THEME_SUB_TAG=v3.1.5
 
 CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
