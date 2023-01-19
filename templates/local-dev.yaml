@@ -25,6 +25,8 @@ services:
       - ../main-website-content-writer-key.json:/etc/service-account.json
       - uploads-data:/usr/src/wordpress/wp-content/uploads
       - wp-logs-data:/var/log/wordpress
+      - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
+      - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
       # theme
       - ../{{REPOSITORY_DIR}}/{{WEBSITE_REPO_NAME}}/{{THEME_REPO_NAME}}:{{WP_UCD_THEME_DIR}}
       # plugins
@@ -101,6 +103,7 @@ services:
       - wordpress
     volumes:
       - uploads-data:/uploads
+      - wphb-cache:/wphb-cache
       - ../utils/init.sh:/util-cmds/init.sh
       - ../utils/wp-scripts:/util-cmds/wp-scripts
       - ../main-website-content-reader-key.json:/etc/service-account.json
@@ -126,6 +129,7 @@ services:
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
+      - wphb-cache:/wphb-cache
       - ../utils/backup_entrypoint.sh:/cmds/backup_entrypoint.sh
       - ../utils/backup.sh:/cmds/backup.sh
       - ../utils/wp-scripts:/util-cmds/wp-scripts
@@ -175,5 +179,7 @@ volumes:
   db-data:
   uploads-data:
   wp-logs-data:
+  wphb-cache:
+  wphb-logs:
   es-data:
   backup-data:

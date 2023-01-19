@@ -22,6 +22,8 @@ services:
     volumes:
       - uploads-data:/usr/src/wordpress/wp-content/uploads
       - wp-logs-data:/var/log/wordpress
+      - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
+      - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
 
   elasticsearch:
     image: {{ELASTIC_SEARCH_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
@@ -84,6 +86,7 @@ services:
       - wordpress
     volumes:
       - uploads-data:/uploads
+      - wphb-cache:/wphb-cache
       - ./main-website-content-reader-key.json:/etc/service-account.json
     command: /util-cmds/init.sh
 
@@ -106,6 +109,7 @@ services:
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
+      - wphb-cache:/wphb-cache
       - ./main-website-content-writer-key.json:/etc/service-account.json
     command: "/util-cmds/backup_entrypoint.sh"
 
@@ -144,5 +148,7 @@ volumes:
   db-data:
   uploads-data:
   wp-logs-data:
+  wphb-cache:
+  wphb-logs:
   backup-data:
   es-data:

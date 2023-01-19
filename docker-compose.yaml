@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.2.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:sandbox
     env_file:
       - .env
     ports:
@@ -22,6 +22,8 @@ services:
     volumes:
       - uploads-data:/usr/src/wordpress/wp-content/uploads
       - wp-logs-data:/var/log/wordpress
+      - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
+      - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
@@ -53,7 +55,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     restart: always
     env_file:
       - .env
@@ -67,7 +69,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
@@ -84,11 +86,12 @@ services:
       - wordpress
     volumes:
       - uploads-data:/uploads
+      - wphb-cache:/wphb-cache
       - ./main-website-content-reader-key.json:/etc/service-account.json
     command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.2.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
@@ -106,11 +109,12 @@ services:
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
+      - wphb-cache:/wphb-cache
       - ./main-website-content-writer-key.json:/etc/service-account.json
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.2.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:sandbox
     restart: always
     env_file:
       - .env
@@ -144,5 +148,7 @@ volumes:
   db-data:
   uploads-data:
   wp-logs-data:
+  wphb-cache:
+  wphb-logs:
   backup-data:
   es-data:
