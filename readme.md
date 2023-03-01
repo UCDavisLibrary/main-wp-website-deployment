@@ -226,6 +226,8 @@ Fill in the following instructions with this value:
 ```bash
 cur=gold # or blue
 case $cur in "gold") new="blue";; "blue") new="gold";; *) new="BAD"; esac
+curtag=v3.x.y
+newtag=v3.x.y
 
 alias dc=docker-compose # or 'docker compose' 
 ```
@@ -248,7 +250,7 @@ Backing up the current system verifies that we have the latest possible changes
 on the system.
 
 ```bash
-d=/etc/library-website/v3;
+d=/etc/library-website/${curtag};
 ssh ${cur}.library.ucdavis.edu \{ cd $d\; ${dc} exec backup /util-cmds/backup.sh\; \}
 ```
 
@@ -261,9 +263,13 @@ versions.
 
 ```bash
   ssh ${new}.library.ucdavis.edu
-  cd /etc/library-website/v3
+  cd /etc/library-website
+  cp -R ${curtag} ${newtag}/
+  cd ${curtag}
   dc down -v 
+  cd ../${newtag}
   git pull 
+  git checkout ${newtag}
   dc pull
 ```
 
