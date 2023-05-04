@@ -116,6 +116,7 @@ else
     
     echo "Downloading: gs://${GOOGLE_CLOUD_BUCKET}/${DATA_ENV}/${WPHB_OPTIONS_FILE}"
     gsutil cp "gs://${GOOGLE_CLOUD_BUCKET}/${DATA_ENV}/${WPHB_OPTIONS_FILE}" $WPHB_CACHE_DIR/$WPHB_OPTIONS_FILE
+    chown www-data:www-data $WPHB_CACHE_DIR/$WPHB_OPTIONS_FILE
   else
     echo "Hummingbird cache options exist. Skipping hydration."
   fi
