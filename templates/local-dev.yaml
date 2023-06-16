@@ -67,7 +67,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     env_file:
       - .env
     environment:
@@ -80,12 +80,13 @@ services:
       - ../utils/monitoring/apache.js:/util-cmds/apache.js
       - ../utils/monitoring/daily-updates.js:/util-cmds/daily-updates.js
       - ../utils/monitoring/daily-updates.sql:/util-cmds/daily-updates.sql
+      - ../utils/monitoring/libcal.js:/util-cmds/libcal.js
       - ../main-website-content-writer-key.json:/etc/service-account.json
     # command: /util-cmds/tail.sh
     command: /util-cmds/monitor.sh
 
   init:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     env_file:
       - .env
     environment:
@@ -111,7 +112,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     env_file:
       - .env
     environment:

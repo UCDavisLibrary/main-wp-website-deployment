@@ -46,6 +46,7 @@ COPY tail.sh tail.sh
 COPY ./monitoring/apache.js apache.js
 COPY ./monitoring/daily-updates.js daily-updates.js
 COPY ./monitoring/daily-updates.sql daily-updates.sql
+COPY ./monitoring/libcal.js libcal.js
 COPY ./monitoring/monitor.sh monitor.sh
 
 COPY backup-cron /etc/cron.d/backup
