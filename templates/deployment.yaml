@@ -55,7 +55,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     restart: always
     env_file:
       - .env
@@ -69,7 +69,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     env_file:
       - .env
     environment:
@@ -91,7 +91,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: {{UTILS_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
     env_file:
       - .env
     environment:
