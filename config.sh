@@ -13,8 +13,8 @@ fi
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v3.5.1.${BUILD_NUM}
-APP_TAG=stage
+APP_VERSION=v3.6.0.${BUILD_NUM}
+APP_TAG=v3.6.0
 
 # Repository tags/branchs
 # Tags should always be used for production deployments
