@@ -24,7 +24,7 @@ steps:
 
   - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
     args: ['/config']
-    env: 
+    env:
     - 'REPO_NAME=$REPO_NAME'
     - 'BRANCH_NAME=$BRANCH_NAME'
     - '_UCD_LIB_INITIATOR=$_UCD_LIB_INITIATOR'
@@ -54,7 +54,7 @@ steps:
     entrypoint: "bash"
     args: ["-c", "./cmds/clone.sh"]
     env:
-      - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1' 
+      - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1'
       - 'REPO_NAME=$REPO_NAME'
       - 'BRANCH_NAME=$BRANCH_NAME'
       - 'SHORT_SHA=$SHORT_SHA'
@@ -62,7 +62,7 @@ steps:
 
   # - name: gcr.io/cloud-builders/docker
   #   env:
-  #     - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1' 
+  #     - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1'
   #     - 'BRANCH_NAME=$BRANCH_NAME'
   #   entrypoint: "bash"
   #   args: ["-c", "./cmds/pull.sh"]
@@ -70,7 +70,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
     args: ["-c", "./cmds/kaniko-build.sh;"]
-    env: 
+    env:
       - 'CLOUD_BUILD=true'
       - 'BRANCH_NAME=$BRANCH_NAME'
       - 'GIT_DISCOVERY_ACROSS_FILESYSTEM=1'
@@ -97,7 +97,7 @@ steps:
     secretEnv: ['SSH_USERNAME']
     entrypoint: 'bash'
     args: [ '-c', 'ssh $$SSH_USERNAME@wp-gc-ci.library.ucdavis.edu "BRANCH_NAME=$BRANCH_NAME /opt/wp-$$BRANCH_NAME/gcloud/dc-deploy.sh || true"']
-    env: 
+    env:
       - 'BRANCH_NAME=$BRANCH_NAME'
     volumes:
     - name: 'ssh'
@@ -124,4 +124,4 @@ substitutions:
   _GITHUB_PR_USER: ''
   _GITHUB_PR_MERGED_BY: ''
 
-timeout: 3200s
+timeout: 5400s
