@@ -55,7 +55,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.0
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
     restart: always
     env_file:
       - .env
@@ -69,7 +69,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.0
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
     env_file:
       - .env
     environment:
@@ -91,7 +91,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.0
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
     env_file:
       - .env
     environment:
