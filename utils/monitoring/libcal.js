@@ -1,5 +1,6 @@
 import mysql from 'mysql';
 import { IncomingWebhook } from '@slack/webhook';
+import { CronJob } from 'cron';
 
 const transientQuery = `
 SELECT
