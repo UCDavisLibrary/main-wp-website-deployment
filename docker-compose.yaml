@@ -1,7 +1,7 @@
 version: '3'
 services:
   wordpress:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.5.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website:sandbox
     env_file:
       - .env
     ports:
@@ -16,6 +16,7 @@ services:
         define('WP_SITEURL', '${SERVER_URL}' );
         define('WP_HOME', '${SERVER_URL}' );
         define('FORCE_SSL_ADMIN', true);
+      FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
     tmpfs:
       - /run
       - /tmp
@@ -55,7 +56,7 @@ services:
       - elasticsearch
 
   monitoring:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     restart: always
     env_file:
       - .env
@@ -69,7 +70,7 @@ services:
     command: /util-cmds/monitor.sh
 
   init:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
@@ -91,7 +92,7 @@ services:
     command: /util-cmds/init.sh
 
   backup:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:v3.6.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-utils:sandbox
     env_file:
       - .env
     environment:
@@ -114,7 +115,7 @@ services:
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
-    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:v3.5.1
+    image: gcr.io/digital-ucdavis-edu/main-wp-website-es-indexer:sandbox
     restart: always
     env_file:
       - .env

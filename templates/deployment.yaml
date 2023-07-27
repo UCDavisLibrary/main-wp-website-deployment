@@ -16,6 +16,7 @@ services:
         define('WP_SITEURL', '${SERVER_URL}' );
         define('WP_HOME', '${SERVER_URL}' );
         define('FORCE_SSL_ADMIN', true);
+      FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
     tmpfs:
       - /run
       - /tmp
