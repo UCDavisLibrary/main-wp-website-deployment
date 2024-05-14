@@ -15,5 +15,8 @@ for package in "${NPM_PRIVATE_PACKAGES[@]}"; do
   if $NPM list | grep -q "@ucd-lib/theme-elements"; then
     $NPM i @ucd-lib/theme-elements@latest --save
   fi
+  if $NPM list | grep -q "@ucd-lib/theme-sass"; then
+    $NPM i @ucd-lib/theme-sass@latest --save
+  fi
   cd $ROOT_DIR/..
 done
