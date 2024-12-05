@@ -1,4 +1,3 @@
-version: '3'
 services:
   wordpress:
     image: {{WEBSITE_IMAGE_NAME}}:{{WEBSITE_TAG}}
