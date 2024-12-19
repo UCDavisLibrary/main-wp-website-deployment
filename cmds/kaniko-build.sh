@@ -50,7 +50,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ##
 # Init/Data back and hydration helper
-## 
+##
 docker run --rm -v $(pwd):/workspace \
   -v $(pwd)/main-website-content-writer-key.json:/kaniko/config.json:ro \
   -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/main-website-content-writer-key.json \
@@ -65,7 +65,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ##
 # Elastic Search Indexer
-## 
+##
 docker run --rm -v $(pwd):/workspace \
   -v $(pwd)/main-website-content-writer-key.json:/kaniko/config.json:ro \
   -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/main-website-content-writer-key.json \
