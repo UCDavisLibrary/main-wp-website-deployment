@@ -3,8 +3,8 @@ node_modules
 repositories
 snapshots
 .DS_Store
-website-local-dev
 main-website-content-reader-key.json
 main-website-content-writer-key.json
 acf-key.txt
 service-account.json
+secrets

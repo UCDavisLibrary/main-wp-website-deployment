@@ -63,7 +63,7 @@ services:
       - db
       - wordpress
     volumes:
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     command: /util-cmds/monitor.sh
 
   init:
@@ -84,7 +84,7 @@ services:
       - wordpress
     volumes:
       - uploads-data:/uploads
-      - ./main-website-content-reader-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-reader-key.json:/etc/service-account.json
     command: /util-cmds/init.sh
 
   backup:
@@ -106,7 +106,7 @@ services:
     volumes:
       - uploads-data:/uploads
       - backup-data:/snapshots
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
@@ -121,7 +121,7 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
 
   db:
     image: mysql:5.7
