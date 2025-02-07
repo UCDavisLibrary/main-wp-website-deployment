@@ -1,4 +1,4 @@
-version: '3'
+
 services:
   wordpress:
     image: gcr.io/digital-ucdavis-edu/main-wp-website:v3.1.4

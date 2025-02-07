@@ -1,4 +1,4 @@
-version: '3'
+
 services:
   wordpress:
     image: localhost/local-dev/main-wp-website:local-dev

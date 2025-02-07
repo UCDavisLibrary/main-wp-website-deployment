@@ -1,4 +1,3 @@
-version: '3'
 
 x-variables:
   main-image: &main-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website:4.0.1
