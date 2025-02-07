@@ -1,2 +1,0 @@
-0 3 * * * /util-cmds/backup.sh >> /var/log/cron.log
-

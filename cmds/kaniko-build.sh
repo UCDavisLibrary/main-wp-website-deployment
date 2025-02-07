@@ -36,8 +36,7 @@ docker run --rm -v $(pwd):/workspace \
   gcr.io/kaniko-project/executor:latest \
   --cache=true \
   --cache-ttl=720h \
-  --snapshotMode=redo \
-  --cache-copy-layers=true \
+  --snapshot-mode=redo \
   --destination=$WEBSITE_IMAGE_NAME_TAG \
   --build-arg=BUILDKIT_INLINE_CACHE=1 \
   --build-arg=GOOGLE_KEY_FILE_CONTENT="${GOOGLE_KEY_FILE_CONTENT}" \
