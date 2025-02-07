@@ -3,7 +3,7 @@ services:
   wordpress:
     image: localhost/local-dev/main-wp-website:local-dev
     env_file:
-      - ../../.env
+      - .env
     ports:
       - ${HOST_PORT:-3000}:80
       - ${STATUS_HOST_PORT:-3002}:8080
@@ -67,7 +67,7 @@ services:
   monitoring:
     image: localhost/local-dev/main-wp-website-utils:local-dev
     env_file:
-      - ../../.env
+      - .env
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
     depends_on:
@@ -85,7 +85,7 @@ services:
   init:
     image: localhost/local-dev/main-wp-website-utils:local-dev
     env_file:
-      - ../../.env
+      - .env
     environment:
       RUN_INIT: "true"
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -110,7 +110,7 @@ services:
   backup:
     image: localhost/local-dev/main-wp-website-utils:local-dev
     env_file:
-      - ../../.env
+      - .env
     environment:
       BACKUP_ENV: ${BACKUP_ENV:-localhost}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -137,7 +137,7 @@ services:
   indexer:
     image: localhost/local-dev/main-wp-website-es-indexer:local-dev
     env_file:
-      - ../../.env
+      - .env
     ports:
       - 3001:3000
     environment:
@@ -153,7 +153,7 @@ services:
   db:
     image: mysql:5.7
     env_file:
-      - ../../.env
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
       MYSQL_DATABASE: ${DB_DATABASE:-wordpress}
