@@ -9,7 +9,7 @@ services:
   wordpress:
     image: *main-image
     env_file:
-      - ../../.env
+      - .env
     ports:
       - ${HOST_PORT:-8000}:80
     restart: always
@@ -62,7 +62,7 @@ services:
     image: *utils-image
     restart: always
     env_file:
-      - ../../.env
+      - .env
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
     depends_on:
@@ -75,7 +75,7 @@ services:
   init:
     image: *utils-image
     env_file:
-      - ../../.env
+      - .env
     environment:
       BACKUP_ENV: ${BACKUP_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -96,7 +96,7 @@ services:
   backup:
     image: *utils-image
     env_file:
-      - ../../.env
+      - .env
     environment:
       BACKUP_ENV: ${BACKUP_ENV:-sandbox}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -119,7 +119,7 @@ services:
     image: *indexer-image
     restart: always
     env_file:
-      - ../../.env
+      - .env
     ports:
       - ${INDEXER_HOST_PORT:-8001}:3000
     environment:
@@ -134,7 +134,7 @@ services:
     image: mysql:5.7
     restart: always
     env_file:
-      - ../../.env
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
