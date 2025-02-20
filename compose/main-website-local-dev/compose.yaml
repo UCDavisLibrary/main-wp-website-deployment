@@ -1,0 +1,191 @@
+
+services:
+  wordpress:
+    image: localhost/local-dev/main-wp-website:local-dev
+    env_file:
+      - .env
+    ports:
+      - ${HOST_PORT:-3009}:80
+      - ${STATUS_HOST_PORT:-3002}:8080
+    environment:
+      SERVER_URL: ${SERVER_URL:-http://localhost:3009}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
+      WORDPRESS_DEBUG_DISPLAY: ${WORDPRESS_DEBUG_DISPLAY:-1}
+      WORDPRESS_DISABLE_FATAL_ERROR_HANDLER: ${WORDPRESS_DISABLE_FATAL_ERROR_HANDLER:-1}
+      WORDPRESS_CONFIG_EXTRA: ${WORDPRESS_CONFIG_EXTRA:-define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);}
+      UCD_CAS_HOST: ${UCD_CAS_HOST:-ssodev.ucdavis.edu}
+      UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+      FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - .../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+      - uploads-data:/usr/src/wordpress/wp-content/uploads
+      - wp-logs-data:/var/log/wordpress
+      - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
+      - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
+      # theme
+      - ../../../ucdlib-theme-wp:/usr/src/wordpress/wp-content/themes/ucdlib-theme-wp
+      # plugins
+      - ../../../ucdlib-wp-plugins/ucd-cas:/usr/src/wordpress/wp-content/plugins/ucd-cas
+      - ../../../ucdlib-wp-plugins/ucdlib-locations:/usr/src/wordpress/wp-content/plugins/ucdlib-locations
+      - ../../../ucdlib-wp-plugins/ucdlib-assets:/usr/src/wordpress/wp-content/plugins/ucdlib-assets
+      - ../../../ucdlib-wp-plugins/ucdlib-migration:/usr/src/wordpress/wp-content/plugins/ucdlib-migration
+      - ../../../ucdlib-wp-plugins/ucdlib-search:/usr/src/wordpress/wp-content/plugins/ucdlib-search
+      - ../../../ucdlib-wp-plugins/ucdlib-directory:/usr/src/wordpress/wp-content/plugins/ucdlib-directory
+      - ../../../ucdlib-wp-plugins/ucdlib-special:/usr/src/wordpress/wp-content/plugins/ucdlib-special
+      - ../../../main-wp-website/monitoring/status.conf:/etc/apache2/conf-available/status.conf
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - cluster.routing.allocation.disk.watermark.flood_stage=98%
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL:http://elasticsearch:9200
+      - xpack.security.enabled=false
+      - telemetry.enabled=false
+    depends_on:
+      - elasticsearch
+
+  monitoring:
+    image: localhost/local-dev/main-wp-website-utils:local-dev
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ../../../main-wp-website/utils/monitoring/monitor.sh:/util-cmds/monitor.sh
+      - ../../../main-wp-website/utils/monitoring/apache.js:/util-cmds/apache.js
+      - ../../../main-wp-website/utils/monitoring/daily-updates.js:/util-cmds/daily-updates.js
+      - ../../../main-wp-website/utils/monitoring/daily-updates.sql:/util-cmds/daily-updates.sql
+      - ../../../main-wp-website/utils/monitoring/libcal.js:/util-cmds/libcal.js
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+    command: /util-cmds/tail.sh
+    # command: /util-cmds/monitor.sh
+
+  init:
+    image: localhost/local-dev/main-wp-website-utils:local-dev
+    env_file:
+      - .env
+    environment:
+      RUN_INIT: "true"
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-3009}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3009}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+      SITE_TAGLINE: ${SITE_TAGLINE:-localhost}
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - wphb-cache:/wphb-cache
+      - ../../../main-wp-website/utils/init.sh:/util-cmds/init.sh
+      - ../../../main-wp-website/utils/wp-scripts:/util-cmds/wp-scripts
+      - ../../secrets/main-website-content-reader-key.json:/etc/service-account.json
+    # command: /util-cmds/tail.sh
+    command: /util-cmds/init.sh
+
+  backup:
+    image: localhost/local-dev/main-wp-website-utils:local-dev
+    env_file:
+      - .env
+    environment:
+      BACKUP_ENV: ${BACKUP_ENV:-localhost}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-3009}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3009}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - backup-data:/snapshots
+      - wphb-cache:/wphb-cache
+      - ../../../main-wp-website/utils/backup_entrypoint.sh:/cmds/backup_entrypoint.sh
+      - ../../../main-wp-website/utils/backup.sh:/cmds/backup.sh
+      - ../../../main-wp-website/utils/wp-scripts:/util-cmds/wp-scripts
+      - ../../../main-wp-website/utils/backup-cron:/etc/cron.d/backup
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+    command: /util-cmds/tail.sh
+    # command: "/util-cmds/backup_entrypoint.sh"
+
+  indexer:
+    image: localhost/local-dev/main-wp-website-es-indexer:local-dev
+    env_file:
+      - .env
+    ports:
+      - 3001:3000
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ../../../main-wp-website/elastic-search/lib:/service/lib
+      - ../../../main-wp-website/elastic-search/index.js:/service/index.js
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+    # command: bash -c "tail -f /dev/null"
+
+  db:
+    image: mysql:5.7
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      MYSQL_DATABASE: ${DB_DATABASE:-wordpress}
+      MYSQL_USER: ${DB_USER:-wordpress}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
+    volumes:
+      - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
+
+  adminer:
+    image: adminer:4
+    ports:
+      - ${ADMINER_HOST_PORT:-8080}:8080
+
+volumes:
+  db-data:
+  uploads-data:
+  wp-logs-data:
+  wphb-cache:
+  wphb-logs:
+  es-data:
+  backup-data:
