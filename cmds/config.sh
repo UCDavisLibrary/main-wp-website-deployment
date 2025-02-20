@@ -1,8 +1,8 @@
 #! /bin/bash
 
-$PROJECT_DIR='../..'
-$THEME_REPO_NAME='ucdlib-theme-wp'
-$PLUGIN_REPO_NAME='ucdlib-wp-plugins'
+PROJECT_DIR=../..
+THEME_REPO_NAME=ucdlib-theme-wp
+PLUGIN_REPO_NAME=ucdlib-wp-plugins
 
 NPM=npm
 NPM_PRIVATE_PACKAGES=(
