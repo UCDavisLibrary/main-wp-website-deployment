@@ -25,7 +25,7 @@ services:
       - /run
       - /tmp
     volumes:
-      - .../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
       - uploads-data:/usr/src/wordpress/wp-content/uploads
       - wp-logs-data:/var/log/wordpress
       - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs

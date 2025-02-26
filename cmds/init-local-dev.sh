@@ -11,3 +11,4 @@ cd $CMDS_DIR
 ./get-gc-reader-key.sh
 ./install-private-packages.sh
 ./generate-dev-bundles.sh
+./get-env.sh local-dev

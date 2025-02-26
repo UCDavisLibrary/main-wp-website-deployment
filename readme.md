@@ -19,42 +19,40 @@ library.ucdavis.edu is a custom Wordpress installation composed of several servi
 ## Local Development
 
 ### Initial Setup
-- Clone this repository
-  - `git clone`
-- Checkout the branch you want to work on, e.g.:
-  - `git checkout sandbox`
-- In the same parent folder in which you performed step 1, clone all git repositories for this deployment. They are defined in config.sh as `ALL_GIT_REPOSITORIES`. IMPORTANT: Make sure you checkout to the branches you wish to work on for each repository.
-- Setup the `./repositories` folder by running `./cmds/init-local-dev.sh`.
-- Grab service account so the `init` container can access website snapshot bucket
-  - Install `gcloud` cli and `gsutils` if you don't already have it (https://cloud.google.com/storage/docs/gsutil_install)
+- Create a directory that will contain all of the repositories used by this project, and then git clone those repos:
+  - [main-wp-website-deployment](https://github.com/UCDavisLibrary/main-wp-website-deployment)
+  - [main-wp-website](https://github.com/UCDavisLibrary/main-wp-website)
+  - [ucdlib-wp-plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
+  - [ucdlib-theme-wp](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
+- Checkout the branch you want to work on for each repository
+- Ensure you have `gcloud` cli.
+  - If not, [install it](https://cloud.google.com/storage/docs/gsutil_install)
   - Login and set project id
     - `gcloud auth login`
     - `gcloud config set project digital-ucdavis-edu`
-  - Copy service account keys:
-    - `./cmds/init-keys.sh`
-- Create your local docker-compose file by running:
-  - `./cmds/generate-deployment-files.sh`
-- Start an `.env` file in the `local-dev` directory (created in the previous step). The most relevant parameters are:
-  - `BACKUP_ENV`: set to something like `sandbox`, `dev`, `prod`, etc. Specifies which Google Cloud bucket to pull data from. Defaults to `sandbox`
-  - `SERVER_URL`: where your local wp instance will live. defaults to `http://localhost:3000`
-  - `HOST_PORT`: host port for the wp instance. defaults to `3000`
-  - `WORDPRESS_DEBUG`: turns on the php debugger. Defaults to `1`(on)
-  - `WORDPRESS_CONFIG_EXTRA`: An opportunity to pass additional values to your wp-config file. To turn on all debugging for development, set to: `define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);`
-  - `RUN_INIT`: Run data hydration on cold start
-- Run the JS watch processes at least once to generate bundles (see section below)
+- `cd` into the deployment repo, and run the initialization script with `./cmds/init-local-dev.sh`, which does the following actions:
+  - Retrieves Google Cloud (GC) service account credentials, which allows you to download the website data on cold start
+  - Installs dependencies of all npm packages (from our theme, plugins, etc)
+  - Builds the JS dev bundles - there is one for the public-side, and one for the WP editor.
+  - Downloads env file to local deployment directory
+- Review the `env` file downloaded to `./compose/main-website-local-dev`, and delete all non-local dev configurations (a single env file is used for all deployments)
+- OPTIONAL: If you need to use the backup utility, you will need a GC service account key that has WRITE privileges. Run `./cmds/get-gc-writer-key.sh`
 - Build your local dev images by running:
-  - `./cmds/build-local-dev.sh`
+  - `./cmds/build-local-dev.sh <version>` where `version` is a [registered build from cork-build-registry](https://github.com/ucd-library/cork-build-registry/blob/main/repositories/main-wp-website.json).
 
 Your development environment should now have all the necessary pieces in place. The next section goes over how to start everything up.
 
 ### Making Changes in Local Development
 - Make sure you followed all the steps in the local-dev inital setup section above.
-- By default, the site loads the dev public and editor js bundles, which are created by two watch processes in the `ucdlib-assets` plugin. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `repositories/main-wp-website/ucdlib-wp-plugins/ucdlib-assets` and run:
+- By default, the site loads the dev public and editor js bundles, which are created by two watch processes in the `ucdlib-assets` plugin. With the watch processes on, any changes you make to the JS/SCSS src will be immediately updated in the bundled site code. To start these up, navigate to `./main-wp-website/ucdlib-wp-plugins/ucdlib-assets` and run:
   - `cd src/public; npm run watch`
   - `cd src/editor; npm run watch`
 - Bring the site up by starting the docker compose stack:
-  - `cd website-local-dev; docker compose up`
+  - `cd main-wp-website-deployment/compose/main-website-local-dev; docker compose up`
 - Code directories are mounted as volumes so changes to your host filesystem are reflected in container.
+- If starting fresh, the most recent data will automatically be downloaded from the `DATA_ENV` environment. This will take a while, you can monitor the script by running `docker compose logs init -f`
+  - After it is done, you will likely need to restart the es indexer with `docker compose
+start indexer`
 
 ### Checking in your code
 
