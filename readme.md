@@ -272,7 +272,7 @@ versions.
 ```
 
 If you run into an error when pulling the images, one of the following might be your issue:
-- docker is not authorized to pull images: `gcloud auth configure-docker`
+- docker is not authorized to pull images: `gcloud auth configure-docker us-west1-docker.pkg.dev`
 - you are not logged into gcloud: `gcloud auth login`
 - you have the wrong project set: `gcloud config set project digital-ucdavis-edu`
 

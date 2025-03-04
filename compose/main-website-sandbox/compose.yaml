@@ -11,6 +11,11 @@ services:
       - .env
     ports:
       - ${HOST_PORT:-8000}:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
     restart: always
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -102,6 +107,7 @@ services:
 
   backup:
     image: *utils-image
+    restart: always
     env_file:
       - .env
     environment:

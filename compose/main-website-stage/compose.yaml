@@ -1,10 +1,21 @@
+
+x-variables:
+  main-image: &main-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website:stage
+  utils-image: &utils-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-utils:stage
+  indexer-image: &indexer-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-es-indexer:stage
+
 services:
   wordpress:
-    image: {{WEBSITE_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: *main-image
     env_file:
       - .env
     ports:
       - ${HOST_PORT:-8000}:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
     restart: always
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
@@ -15,6 +26,7 @@ services:
         define('WP_SITEURL', '${SERVER_URL}' );
         define('WP_HOME', '${SERVER_URL}' );
         define('FORCE_SSL_ADMIN', true);
+      UCD_CAS_HOST: ${UCD_CAS_HOST:-cas.ucdavis.edu}
       FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
     tmpfs:
       - /run
@@ -26,9 +38,10 @@ services:
       - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
 
   elasticsearch:
-    image: {{ELASTIC_SEARCH_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
     restart: always
     environment:
+      - INSTANCE_NAME=${INSTANCE_NAME:-stage}
       - bootstrap.memory_lock=true
       - discovery.type=single-node
       - cluster.routing.allocation.disk.threshold_enabled=false
@@ -43,7 +56,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
 
   kibana:
-    image: {{KIBANA_IMAGE_NAME}}:{{ELASTIC_SEARCH_TAG}}
+    image: docker.elastic.co/kibana/kibana:7.16.3
     restart: always
     ports:
       - ${KIBANA_HOST_PORT:-8002}:5601
@@ -55,25 +68,26 @@ services:
       - elasticsearch
 
   monitoring:
-    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
+    image: *utils-image
     restart: always
     env_file:
       - .env
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+      INSTANCE_NAME: ${INSTANCE_NAME:-stage}
     depends_on:
       - db
       - wordpress
     volumes:
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     command: /util-cmds/monitor.sh
 
   init:
-    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
+    image: *utils-image
     env_file:
       - .env
     environment:
-      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
+      DATA_ENV: ${DATA_ENV:-stage}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
@@ -81,21 +95,23 @@ services:
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
       GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+      SITE_TAGLINE: ${SITE_TAGLINE:-stage}
     depends_on:
       - db
       - wordpress
     volumes:
       - uploads-data:/uploads
       - wphb-cache:/wphb-cache
-      - ./main-website-content-reader-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-reader-key.json:/etc/service-account.json
     command: /util-cmds/init.sh
 
   backup:
-    image: {{UTILS_IMAGE_NAME}}:{{APP_TAG}}
+    image: *utils-image
+    restart: always
     env_file:
       - .env
     environment:
-      BACKUP_ENV: ${BACKUP_ENV:-sandbox}
+      BACKUP_ENV: ${BACKUP_ENV:-stage}
       WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
       HOST_PORT: ${HOST_PORT:-8000}
       WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
@@ -110,11 +126,11 @@ services:
       - uploads-data:/uploads
       - backup-data:/snapshots
       - wphb-cache:/wphb-cache
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     command: "/util-cmds/backup_entrypoint.sh"
 
   indexer:
-    image: {{INDEXER_IMAGE_NAME}}:{{WEBSITE_TAG}}
+    image: *indexer-image
     restart: always
     env_file:
       - .env
@@ -125,10 +141,11 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./main-website-content-writer-key.json:/etc/service-account.json
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+
 
   db:
-    image: {{MYSQL_IMAGE_NAME}}:{{MYSQL_TAG}}
+    image: mysql:5.7
     restart: always
     env_file:
       - .env
@@ -150,5 +167,5 @@ volumes:
   wp-logs-data:
   wphb-cache:
   wphb-logs:
-  backup-data:
   es-data:
+  backup-data:
