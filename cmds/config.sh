@@ -1,6 +1,7 @@
 #! /bin/bash
 
-PROJECT_DIR=../..
+CMDS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROJECT_DIR=$CMDS_DIR/../..
 THEME_REPO_NAME=ucdlib-theme-wp
 PLUGIN_REPO_NAME=ucdlib-wp-plugins
 
