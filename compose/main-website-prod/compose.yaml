@@ -1,0 +1,166 @@
+
+x-variables:
+  main-image: &main-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website:v4.1.0
+  utils-image: &utils-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-utils:v4.1.0
+  indexer-image: &indexer-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-es-indexer:v4.1.0
+
+services:
+  wordpress:
+    image: *main-image
+    env_file:
+      - .env
+    ports:
+      - ${HOST_PORT:-8000}:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_SITEURL', '${SERVER_URL}' );
+        define('WP_HOME', '${SERVER_URL}' );
+        define('FORCE_SSL_ADMIN', true);
+      UCD_CAS_HOST: ${UCD_CAS_HOST:-cas.ucdavis.edu}
+      FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - uploads-data:/usr/src/wordpress/wp-content/uploads
+      - wp-logs-data:/var/log/wordpress
+      - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
+      - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    restart: always
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - cluster.routing.allocation.disk.watermark.flood_stage=98%
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    restart: always
+    ports:
+      - ${KIBANA_HOST_PORT:-8002}:5601
+    environment:
+      - ELASTICSEARCH_URL:http://elasticsearch:9200
+      - xpack.security.enabled=false
+      - telemetry.enabled=false
+    depends_on:
+      - elasticsearch
+
+  monitoring:
+    image: *utils-image
+    restart: always
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+    command: /util-cmds/monitor.sh
+
+  init:
+    image: *utils-image
+    env_file:
+      - .env
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-8000}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - wphb-cache:/wphb-cache
+      - ../../secrets/main-website-content-reader-key.json:/etc/service-account.json
+    command: /util-cmds/init.sh
+
+  backup:
+    image: *utils-image
+    restart: always
+    env_file:
+      - .env
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db:3306}
+      HOST_PORT: ${HOST_PORT:-8000}
+      WORDPRESS_DB_DATABASE: ${DB_DATABASE:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wordpress}
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - uploads-data:/uploads
+      - backup-data:/snapshots
+      - wphb-cache:/wphb-cache
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+    command: "/util-cmds/backup_entrypoint.sh"
+
+  indexer:
+    image: *indexer-image
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${INDEXER_HOST_PORT:-8001}:3000
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/service-account.json
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
+
+
+  db:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 262114
+        hard: 262114
+
+volumes:
+  db-data:
+  uploads-data:
+  wp-logs-data:
+  wphb-cache:
+  wphb-logs:
+  es-data:
+  backup-data:
