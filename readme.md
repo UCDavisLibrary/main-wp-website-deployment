@@ -2,41 +2,24 @@
 This repository contains files for deploying the main UC Davis Library website
 (library.ucdavis.edu) to a server or locally.
 
-## Site Architecture
-library.ucdavis.edu is a custom Wordpress installation composed of several services and git repositories:
-- Third-party Services
-  - [Wordpress](https://developer.wordpress.org/)
-  - [Wordpress CLI](https://wp-cli.org/)
-  - [Mysql](https://www.mysql.com/)
-  - [Elasticsearch](https://www.elastic.co/elasticsearch/) and [Kibana](https://www.elastic.co/kibana/)
-  - [Adminer (local development only)](https://www.adminer.org/)
-- Custom Git Repositories
-  - [Primary Theme](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
-  - [Additional Plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
-  - [ES Indexer](https://github.com/UCDavisLibrary/main-wp-website/tree/stage/elastic-search)
-  - [Data init and backup services](https://github.com/UCDavisLibrary/main-wp-website-deployment/tree/stage/init)
-
 ## Local Development
 
 ### Initial Setup
+Take the following steps to set up your local environment for the first time:
 - Create a directory that will contain all of the repositories used by this project, and then git clone those repos:
-  - [main-wp-website-deployment](https://github.com/UCDavisLibrary/main-wp-website-deployment)
-  - [main-wp-website](https://github.com/UCDavisLibrary/main-wp-website)
-  - [ucdlib-wp-plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
-  - [ucdlib-theme-wp](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
+  - This repository: [main-wp-website-deployment](https://github.com/UCDavisLibrary/main-wp-website-deployment)
+  - The wordpress src code along with custom utilities: [main-wp-website](https://github.com/UCDavisLibrary/main-wp-website)
+  - Custom plugins: [ucdlib-wp-plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins)
+  - Our custom theme: [ucdlib-theme-wp](https://github.com/UCDavisLibrary/ucdlib-theme-wp)
 - Checkout the branch you want to work on for each repository
 - Ensure you have `gcloud` cli.
   - If not, [install it](https://cloud.google.com/storage/docs/gsutil_install)
   - Login and set project id
     - `gcloud auth login`
     - `gcloud config set project digital-ucdavis-edu`
-- `cd` into the deployment repo, and run the initialization script with `./cmds/init-local-dev.sh`, which does the following actions:
-  - Retrieves Google Cloud (GC) service account credentials, which allows you to download the website data on cold start
-  - Installs dependencies of all npm packages (from our theme, plugins, etc)
-  - Builds the JS dev bundles - there is one for the public-side, and one for the WP editor.
-  - Downloads env file to local deployment directory
+- `cd` into the deployment repo, and run the initialization script with `./cmds/init-local-dev.sh`
 - Review the `env` file downloaded to `./compose/main-website-local-dev`, and delete all non-local dev configurations (a single env file is used for all deployments)
-- OPTIONAL: If you need to use the backup utility, you will need a GC service account key that has WRITE privileges. Run `./cmds/get-gc-writer-key.sh`
+- OPTIONAL: If you need to use the backup utility (you probably won't), you will need a GC service account key that has WRITE privileges. Run `./cmds/get-gc-writer-key.sh`
 - Build your local dev images by running:
   - `./cmds/build-local-dev.sh <version>` where `version` is a [registered build from cork-build-registry](https://github.com/ucd-library/cork-build-registry/blob/main/repositories/main-wp-website.json).
 
@@ -51,48 +34,15 @@ Your development environment should now have all the necessary pieces in place. 
   - `cd main-wp-website-deployment/compose/main-website-local-dev; docker compose up`
 - Code directories are mounted as volumes so changes to your host filesystem are reflected in container.
 - If starting fresh, the most recent data will automatically be downloaded from the `DATA_ENV` environment. This will take a while, you can monitor the script by running `docker compose logs init -f`
+  - If not starting fresh, and you want the most recent data, make sure your `DATA_ENV` config is pointing to the environment currently being run by production, and drop your volume with `docker compose down -v`
   - After it is done, you will likely need to restart the es indexer with `docker compose
 start indexer`
 
-### Checking in your code
-
-#### Loading a new snapshot
-If you need to update your snapshot or use a different one entirely:
-1. Drop the existing docker volumes: `docker compose down -v`
-2. Make sure your `BACKUP_ENV` config is pointing to the bucket you want to use
-3. Restart the stack: `docker compose up`
-
-
-## Usage
-
-### Env File
-Here are some common parameters:
-| Param | Description |
-| ----- | ----------- |
-| SERVER_URL | Your wordpress site url/blog address i.e. `https://stage.library.ucdavis.edu` or `http://localhost:3000`|
-| WORDPRESS_DEBUG | Set to `1` to turn wp's php debug mode. Nice for local development. |
-| WORDPRESS_CONFIG_EXTRA | Set arbitrary `wp-config` values. `WORDPRESS_CONFIG_EXTRA=define('SCRIPT_DEBUG', true);` will turn on the React debug tool. |
-| HOST_PORT | Port where site is hosted. Defaults to `8000` |
-| WORDPRESS_DB_DATABASE | Name of mysql database used by site. defaults to `wordpress` |
-| WORDPRESS_DB_PASSWORD | Password of mysql database used by site. defaults to `wordpress` |
-| WORDPRESS_DB_USER | User of mysql database used by site. defaults to `wordpress` |
-| MYSQL_ROOT_PASSWORD | Root password for db. defaults to `wordpress` |
-| BACKUP_ENV | Google bucket to write nightly backups to |
-| DATA_ENV | Google bucket to pull data from if db/uploads folder are empty |
-| UCD_CAS_ENSURE_USERS | Takes a comma-separated list of kerberos ids. guarantees specified users admin access to site |
-
-Here is a good env for local development:
-```
-WORDPRESS_DEBUG=1
-WORDPRESS_CONFIG_EXTRA=define( 'WP_ENVIRONMENT_TYPE', 'local' );define('SCRIPT_DEBUG', true);
-DATA_ENV=stage
-UCD_CAS_ENSURE_USERS=yourKerberos
-```
-
 ## Production Deployment
 
-The production deployment depends on multiple VMs and docker constellations,
-controlled with docker-compose files.  An [Overview
+### Server Environment
+
+The production deployment depends on multiple VMs and docker compose clusters.  An [Overview
 Diagram](https://docs.google.com/drawings/d/1nw_3TyurSa4UEb4Z_4ah-3_XTW7Po3O8c-WtRltKBRg/edit?usp=sharing)
 gives a general description of the deployment setup.  All traffic to the website
 is directed to an apache instance that acts as a routing service to the
@@ -154,121 +104,48 @@ straightforward.  The only major consideration, is that while you are preparing
 your system, you need to make sure that you are *not* using the deployment port
 (80), otherwise the router will include your setup prematurely.
 
-The general steps are:
-- disable editing on the current server (Not yet specified)
-- backup the server
-- Initialize new service
-- - Updated images on new backend
-- - Restore the backup you just made unto this new backend
-- - Reindex your site.
-- - bring the new backend wordpress down
-- - Update the port
-- - bring the new backend wordpress up
-- Retire current service
-- - Verify that both instances are working properly
-- - stop the old instance
-- renable editing on the new server (Not yet specified) 
-
-Here are the steps to deploy to blue and gold. Each new deployment should target
-the non-running instance, alternating between blue and gold.
 
 ### Deployment Steps
 
-#### Updating Code and Images
-Before deploying, we need to make sure we have the updated code ready to go and accessible by blue/gold.
+#### Build Production Images
+If you made any changes to the following repositories, you will need to check in and tag your code and update the appropriate registry files:
+| Repository | Registry File | 
+| ---------- | -------- |
+| [main-wp-website](https://github.com/UCDavisLibrary/main-wp-website) | [main-wp-website.json](https://github.com/ucd-library/cork-build-registry/blob/main/repositories/main-wp-website.json) |
+| [ucdlib-wp-plugins](https://github.com/UCDavisLibrary/ucdlib-wp-plugins) | [ucdlib-wp-plugins.json](https://github.com/ucd-library/cork-build-registry/blob/main/repositories/ucdlib-wp-plugins.json) |
+| [ucdlib-theme-wp](https://github.com/UCDavisLibrary/ucdlib-theme-wp) | [ucdlib-theme-wp.json](https://github.com/ucd-library/cork-build-registry/blob/main/repositories/ucdlib-theme-wp.json) |
 
-First, the relevant submodules should be updated and tagged. For `ucdlib-wp-plugins` and/or `ucdlib-theme-wp`:
-```bash
-git checkout main
-git merge stage --ff-only
-git push
-git tag v3.x.y
-git push origin --tags
-```
-
-Next, the same sort of thing needs to happen on the primary repo `main-wp-website`
-```bash
-git checkout main
-git merge stage --ff-only
-git push
-```
-Go to github and verify you have the correct submodule hashes, and then:
-```bash
-git tag v3.x.y
-git push origin --tags
-```
-
-Head on over to the deployment repo: `main-wp-website-deployment`
-```bash
-git checkout main
-git merge stage
-```
-
-Update the version numbers in `config.sh` and run `./cmds/generate-deployment-files`. Finish merging, commit and tag.
-```bash
-git add --all
-git commit
-git push
-git tag v3.x.y
-git push origin --tags
-```
-
-Build your images with `./cmds/submit.sh`. You will get a slack update in `os-gcb-notifications` - verify the `TAG_NAME` property is what you expect.
+Then run `cmds/build.sh <main-wp-website version>`
 
 #### Identify server
 Since we switch between blue and gold servers, you are never really sure which
 is in production, so you have to check the ROUTEID cookie with `curl -I https://library.ucdavis.edu`.
 
-Fill in the following instructions with this value:
-
-```bash
-cur=gold # or blue
-case $cur in "gold") new="blue";; "blue") new="gold";; *) new="BAD"; esac
-curtag=v3.x.y
-newtag=v3.x.y
-
-alias dc=docker-compose # or 'docker compose' 
-```
-
-#### Disable editing
-
-This is still TBD. One idea is to install the freeze plugin, and the
-enable/disable it via the wp config file as in:
-
-```bash
-dc exec wordpress wp config set FREEZE_OFF false --raw
-```
-One problem with that solution is that it seems to turn off the API, although my
-review of the software seems to indicate that shouldn't be the case.
-
-
 #### Backup current system
 
-Backing up the current system verifies that we have the latest possible changes
-on the system.
+Even though backups should run nightly, manually backing up the current system verifies that we have the latest possible changes on the system.
 
 ```bash
-d=/etc/library-website/${curtag};
-ssh ${cur}.library.ucdavis.edu \{ cd $d\; ${dc} exec backup /util-cmds/backup.sh\; \}
+ssh $blue_or_gold.library.ucdavis.edu
+cd /etc/library-website/main-wp-website-deployment/compose/main-website-prod;
+docker compose exec backup /util-cmds/backup.sh
 ```
 
-#### Initialize new service
-
-First, initialize your new service.  This example shows where you are simply
-updating the production images, but the steps are required for any changes.
-These commands simply drop any previous data, and get the latest required
-versions.
+#### Download new service images
 
 ```bash
-  ssh ${new}.library.ucdavis.edu
-  cd /etc/library-website
-  cp -R ${curtag} ${newtag}/
-  cd ${curtag}
-  dc down -v 
-  cd ../${newtag}
-  git pull 
-  git checkout ${newtag}
-  dc pull
+# connect to new server
+ssh $blue_or_gold.library.ucdavis.edu
+cd /etc/library-website/main-wp-website-deployment/compose/main-website-prod;
+
+# drop previous deployment volume
+docker compose down -v
+
+# get any changes to deployment files
+git pull
+
+# download images
+docker compose pull
 ```
 
 If you run into an error when pulling the images, one of the following might be your issue:
@@ -276,65 +153,36 @@ If you run into an error when pulling the images, one of the following might be 
 - you are not logged into gcloud: `gcloud auth login`
 - you have the wrong project set: `gcloud config set project digital-ucdavis-edu`
 
-The first time bringing docker up and indexing, the port should be something
-other than `80`. In `/etc/library-website/v3/.env`, modify `HOST_PORT` to be
-something like `3003`.  This is also where you would set your system up so that
-it's pulling the data you need. More than likely, this is the backup you just
-performed.
+#### Load data in volume
 
-```bash
-dc up -d
-```
+The first time bringing docker up and indexing, the port must be something
+other than `80`, otherwise you will have problems with the data load. In the env file, modify `HOST_PORT` to an inactive port.
+
+Next, bring up the containers with `docker compose up -d`
 
 You can follow along and monitor the logs to see that the initialization script worked
-properly. 
+properly with `docker compose logs init -f`
 
-The indexer can sometimes fail and exit on the first run, as the mysql database
-is not ready in time.  If the indexer crashes, restart it with `docker compose
-start indexer`
+For good measure, ensure the indexer has the most recent data with `docker compose wordpress curl http://indexer:3000/reindex`. You can follow along with `docker compose logs indexer -f`. You can consider it done when it starts logging that it is reporting its metrics to Google Cloud.
 
-You can also explicitly get a reindex with: 
+Once the indexer finishes completely, 
+- Take down the cluser with `docker compose down`
+- Update `HOST_PORT=80` in env file
+- Bring the cluster back up with `docker compose up -d`
 
-```bash
-dc exec wordpress curl http://indexer:3000/reindex
-```
+#### Test New Service
+You will now have both instances running. To make sure that your new instance is functional,
+- delete the `ROUTEID` cookie for the site in your browser.
+- reload the page
+- verify that the new `ROUTEID` cookie matches the new server environment (`blue` or `gold`)
+Repeat the previous steps until you are connected to the new server.
 
-Once the indexer finishes completely, you can make the new server discoverable
-by the router by updating the `HOST_PORT=80` and creating an new wordpress
-container.  Restarting the container doesn't acknowledge the change.
+If something is seriously wrong, you can quickly abort the deployment with `docker compose down`
 
-```bash
-dc -rm -f -s wordpress;
-dc up -d wordpress
-```
+Once you are connected to the new server, perform the following steps:
+- Clear the page cache. `Hummingbird Pro -> Caching -> Clear Cache`
 
-### Retire current service
+#### Retire current service
+Only one server should be running for any prolonged period of time since page edits are localized to the server's database. 
 
-At this point, you can vist the production pages, and verify that both backends
-are running.  This is okay, since you cannot write to the current server.  Once
-you have convinced yourself that things look good, you can stop (but don't bring
-down) the cur (now old) server.  You stop it, so if there is a big problem, you
-can 
-
-```bash
-ssh ${cur}.library.ucdavis.edu
-cd /etc/library-website/v3
-dc stop
-```
-
-### New Backup
-
-Backing up the new system fust verifies that we have the latest possible changes
-on our new backup schedule
-
-```bash
-d=/etc/library-website/v3;
-ssh ${new}.library.ucdavis.edu \{ cd $d\; ${dc} exec backup /util-cmds/backup.sh\; \}
-```
-
-
-### Enable editing
-
-This is still TBD. 
-
-
+Run `docker compose down` on the old server. The volume will be dropped in the next deployment.
