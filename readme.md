@@ -186,3 +186,5 @@ Once you are connected to the new server, perform the following steps:
 Only one server should be running for any prolonged period of time since page edits are localized to the server's database. 
 
 Run `docker compose down` on the old server. The volume will be dropped in the next deployment.
+
+As an extra precaution, change the `HOST_PORT` to something other than 80 in the env file.
