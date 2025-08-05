@@ -84,6 +84,9 @@ services:
       - ../../../main-wp-website/utils/monitoring/daily-updates.js:/util-cmds/daily-updates.js
       - ../../../main-wp-website/utils/monitoring/daily-updates.sql:/util-cmds/daily-updates.sql
       - ../../../main-wp-website/utils/monitoring/libcal.js:/util-cmds/libcal.js
+      - ../../../main-wp-website/utils/package.json:/util-cmds/package.json
+      - ../../../main-wp-website/utils/package-lock.json:/util-cmds/package-lock.json
+      - ../../../main-wp-website/utils/monitoring/status.conf:/etc/apache2
       - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     command: /util-cmds/tail.sh
     # command: /util-cmds/monitor.sh
@@ -157,6 +160,8 @@ services:
     volumes:
       - ../../../main-wp-website/elastic-search/lib:/service/lib
       - ../../../main-wp-website/elastic-search/index.js:/service/index.js
+      - ../../../main-wp-website/elastic-search/package.json:/service/package.json
+      - ../../../main-wp-website/elastic-search/package-lock.json:/service/package-lock.json
       - ../../secrets/main-website-content-writer-key.json:/etc/service-account.json
     # command: bash -c "tail -f /dev/null"
 
@@ -169,6 +174,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE:-wordpress}
       MYSQL_USER: ${DB_USER:-wordpress}
       MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
+    command: --log-bin-trust-function-creators=1 # allows creation of stored functions without super privileges
     volumes:
       - db-data:/var/lib/mysql
     ulimits:

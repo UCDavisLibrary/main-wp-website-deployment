@@ -154,6 +154,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: --log-bin-trust-function-creators=1 # allows creation of stored functions without super privileges
     volumes:
       - db-data:/var/lib/mysql
     ulimits:
