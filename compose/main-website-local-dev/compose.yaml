@@ -21,6 +21,8 @@ services:
       UCD_THEME_ENV: ${UCD_THEME_ENV:-dev}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/etc/service-account.json}
       FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
+    depends_on:
+      - db
     tmpfs:
       - /run
       - /tmp

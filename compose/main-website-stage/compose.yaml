@@ -28,6 +28,8 @@ services:
         define('FORCE_SSL_ADMIN', true);
       UCD_CAS_HOST: ${UCD_CAS_HOST:-cas.ucdavis.edu}
       FORMINATOR_ADDON_RT_HOST: ${FORMINATOR_ADDON_RT_HOST:-https://rt.lib.ucdavis.edu}
+    depends_on:
+      - db
     tmpfs:
       - /run
       - /tmp
