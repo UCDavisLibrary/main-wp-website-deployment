@@ -142,7 +142,7 @@ services:
 
 
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     restart: always
     env_file:
       - .env
@@ -151,6 +151,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: --log-bin-trust-function-creators=1 # allows creation of stored functions without super privileges
     volumes:
       - db-data:/var/lib/mysql
     ulimits:
