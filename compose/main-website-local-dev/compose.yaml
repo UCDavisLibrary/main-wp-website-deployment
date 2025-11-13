@@ -32,6 +32,7 @@ services:
       - wp-logs-data:/var/log/wordpress
       - wphb-logs:/usr/src/wordpress/wp-content/wphb-logs
       - wphb-cache:/usr/src/wordpress/wp-content/wphb-cache
+      - ../../../main-wp-website/utils/wp-scripts:/wp-scripts
       # theme
       - ../../../ucdlib-theme-wp:/usr/src/wordpress/wp-content/themes/ucdlib-theme-wp
       # plugins
