@@ -1,8 +1,8 @@
 
 x-variables:
-  main-image: &main-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website:v4.3.0
-  utils-image: &utils-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-utils:v4.3.0
-  indexer-image: &indexer-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-es-indexer:v4.3.0
+  main-image: &main-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website:v4.4.0
+  utils-image: &utils-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-utils:v4.4.0
+  indexer-image: &indexer-image us-west1-docker.pkg.dev/digital-ucdavis-edu/website/main-wp-website-es-indexer:v4.4.0
 
 services:
   wordpress:
