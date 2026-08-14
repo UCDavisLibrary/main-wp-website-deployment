@@ -17,7 +17,7 @@ if [ -z "$ENVIRONMENT" ]; then
   exit 1
 fi
 
-DEPLOYMENT_DIR="../compose/ucdlib-intranet-$ENVIRONMENT"
+DEPLOYMENT_DIR="../compose/main-website-$ENVIRONMENT"
 if [ ! -d "$DEPLOYMENT_DIR" ]; then
   echo "Deployment directory does not exist: $DEPLOYMENT_DIR"
   exit 1
